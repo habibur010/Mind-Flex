@@ -10,9 +10,9 @@ export default function Landing() {
           <Brain className="w-8 h-8 text-primary" />
           <span className="text-2xl font-bold font-display text-foreground">MindFlex</span>
         </div>
-        <Link href="/api/login" className="px-6 py-2.5 rounded-full bg-white text-foreground font-semibold shadow-sm hover:shadow-md transition-all">
+        <a href="/api/login" className="px-6 py-2.5 rounded-full bg-white text-foreground font-semibold shadow-sm hover:shadow-md transition-all">
           Sign In
-        </Link>
+        </a>
       </header>
 
       {/* Hero */}
@@ -29,9 +29,9 @@ export default function Landing() {
               A playful, supportive space designed for ADHD minds. Track tasks, play focus games, and find your daily rhythm.
             </p>
             <div className="flex gap-4">
-              <Link href="/api/login" className="px-8 py-4 rounded-full bg-primary text-primary-foreground font-bold text-lg shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all flex items-center gap-2">
+              <a href="/api/login" className="px-8 py-4 rounded-full bg-primary text-primary-foreground font-bold text-lg shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all flex items-center gap-2">
                 Get Started <ArrowRight className="w-5 h-5" />
-              </Link>
+              </a>
             </div>
           </div>
           
