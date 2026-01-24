@@ -1,0 +1,108 @@
+Build a responsive web application called “MindFlex” designed to support ADHD patients in managing daily tasks through playful activities, relaxation tools, and progress tracking. The site should be engaging, accessible, and privacy‑respecting.
+
+
+
+ Purpose
+- Help ADHD patients structure their day with **small, achievable tasks**.  
+- Provide **mini‑games, yoga, meditation, and music** to reduce stress and improve focus.  
+- Track progress with **points, badges, and streaks**.  
+- Offer **non‑diagnostic assessments** (AI webcam + questionnaire) to personalize routines.  
+- Integrate **wearable data** (smartwatch) for future insights.
+
+
+
+ Home Page (Section 1 modules)
+This section is shown as per the UI/UX design.
+
+Games: 
+  - Simple mini‑games (reaction tapper, memory match, breathing rhythm).  
+  - Purpose: redirect attention, reduce overthinking.  
+
+Yoga:
+  - Videos, images, and step‑by‑step explanations.  
+  - Gentle stretches only, with safety notes.  
+
+Music:
+  - Sleep/relaxation playlists.  
+  - Features: timer, volume control, loop option.  
+
+Chatbot: 
+  - Supportive, non‑clinical chat.  
+  - Helps reduce stress and reframe thoughts.  
+
+
+
+Main Features
+
+1. AI Webcam Test (Assessment A)
+- Patient answers questions on screen.  
+- AI analyzes **facial engagement signals** (not medical diagnosis).  
+- Data stored securely for personalization.  
+- Consent required before camera access.  
+
+ 2. Questionnaire Test (Assessment B)
+- Patient answers structured questions (focus, sleep, mood).  
+- AI evaluates responses to suggest routines.  
+- Combined with Assessment A → generates **Personalized Routine Recommendation**.  
+
+ 3. Smartwatch Data Integration
+- Upload CSV/JSON with steps, sleep, heart rate averages.  
+- Show **trends and progress charts**.  
+- “Coming Soon”: automatic sync with Health Connect/Apple Health/Google Fit.  
+
+
+ Core System Design
+
+- Points & Rewards:
+  - Earn points for completing tasks.  
+  - Unlock badges and streaks.  
+
+- **Profile & Progress:**  
+  - Dashboard with charts, summaries, and badges.  
+  - Weekly streak tracker.  
+
+- **Accessibility:**  
+  - Dyslexia‑friendly fonts, captions, reduced motion toggle.  
+  - Large tap targets, high contrast mode.  
+
+- **Privacy & Consent:**  
+  - Clear data controls (export/delete).  
+  - Camera/mic only with explicit consent.  
+
+---
+
+ Technical Blueprint
+
+- **Frontend:** React + TypeScript, TailwindCSS.  
+- **Backend:** Node.js + PostgreSQL.  
+- **Auth:** OAuth/email login.  
+- **Media:** HLS for music, CDN for videos/images.  
+- **AI:**  
+  - Webcam analysis: MediaPipe/TF.js (local processing).  
+  - Questionnaire: rules engine for recommendations.  
+- **Data Model:**  
+  - User, Task, Session, Assessment, DeviceData, Badge.  
+
+---
+
+Microcopy Examples
+
+- Hero: “MindFlex — structure your day with small, doable wins.”*  
+- CTA: “Start today.”*  
+- Games card: “Quick mini‑games to reset your focus.”*  
+- Yoga card: “Gentle stretches with clear guidance.”*  
+- Music card: “Drift into calm — sleep playlists with a timer.”*  
+- Chatbot card: “Talk it out — supportive chat, no judgment.”*  
+- Smartwatch: “Upload your data to see trends. Auto‑sync — coming soon.”*
+
+
+Developer Tasks
+
+1. Scaffold app (auth, routing, layout, theme).  
+2. Build Section 1 modules (Games, Yoga, Music, Chatbot).  
+3. Implement tasks & points system.  
+4. Add Assessments A & B with consent flows.  
+5. Create Profile & Progress dashboard.  
+6. Smartwatch upload + “coming soon” banner.  
+7. Accessibility features.  
+8. Privacy & data controls.  
