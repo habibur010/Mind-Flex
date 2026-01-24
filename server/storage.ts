@@ -1,38 +1,120 @@
-import { type User, type InsertUser } from "@shared/schema";
-import { randomUUID } from "crypto";
-
-// modify the interface with any CRUD methods
-// you might need
+import { 
+  users, tasks, moodLogs, assessments, healthData, badges, userBadges,
+  type User, type InsertTask, type Task, type UpdateTaskRequest,
+  type InsertMoodLog, type MoodLog,
+  type InsertAssessment, type Assessment,
+  type InsertHealthData, type HealthData,
+  type Badge, type UserBadge
+} from "@shared/schema";
+import { db } from "./db";
+import { eq, desc, and } from "drizzle-orm";
+import { authStorage } from "./replit_integrations/auth/storage";
 
 export interface IStorage {
-  getUser(id: string): Promise<User | undefined>;
-  getUserByUsername(username: string): Promise<User | undefined>;
-  createUser(user: InsertUser): Promise<User>;
+  // Tasks
+  getTasks(userId: string): Promise<Task[]>;
+  createTask(userId: string, task: InsertTask): Promise<Task>;
+  updateTask(id: number, updates: UpdateTaskRequest): Promise<Task>;
+  deleteTask(id: number): Promise<void>;
+
+  // Mood
+  getMoodLogs(userId: string): Promise<MoodLog[]>;
+  createMoodLog(userId: string, log: InsertMoodLog): Promise<MoodLog>;
+
+  // Assessments
+  getAssessments(userId: string): Promise<Assessment[]>;
+  createAssessment(userId: string, assessment: InsertAssessment): Promise<Assessment>;
+
+  // Health
+  getHealthData(userId: string): Promise<HealthData[]>;
+  createHealthData(userId: string, data: InsertHealthData): Promise<HealthData>;
+
+  // User/Badges
+  getUserBadges(userId: string): Promise<Badge[]>;
+  getUserStats(userId: string): Promise<{ points: number, streak: number, tasksCompleted: number }>;
 }
 
-export class MemStorage implements IStorage {
-  private users: Map<string, User>;
-
-  constructor() {
-    this.users = new Map();
+export class DatabaseStorage implements IStorage {
+  // Tasks
+  async getTasks(userId: string): Promise<Task[]> {
+    return await db.select().from(tasks).where(eq(tasks.userId, userId)).orderBy(desc(tasks.createdAt));
   }
 
-  async getUser(id: string): Promise<User | undefined> {
-    return this.users.get(id);
+  async createTask(userId: string, task: InsertTask): Promise<Task> {
+    const [newTask] = await db.insert(tasks).values({ ...task, userId }).returning();
+    return newTask;
   }
 
-  async getUserByUsername(username: string): Promise<User | undefined> {
-    return Array.from(this.users.values()).find(
-      (user) => user.username === username,
-    );
+  async updateTask(id: number, updates: UpdateTaskRequest): Promise<Task> {
+    const [updated] = await db.update(tasks).set(updates).where(eq(tasks.id, id)).returning();
+    return updated;
   }
 
-  async createUser(insertUser: InsertUser): Promise<User> {
-    const id = randomUUID();
-    const user: User = { ...insertUser, id };
-    this.users.set(id, user);
-    return user;
+  async deleteTask(id: number): Promise<void> {
+    await db.delete(tasks).where(eq(tasks.id, id));
+  }
+
+  // Mood
+  async getMoodLogs(userId: string): Promise<MoodLog[]> {
+    return await db.select().from(moodLogs).where(eq(moodLogs.userId, userId)).orderBy(desc(moodLogs.createdAt));
+  }
+
+  async createMoodLog(userId: string, log: InsertMoodLog): Promise<MoodLog> {
+    const [newLog] = await db.insert(moodLogs).values({ ...log, userId }).returning();
+    return newLog;
+  }
+
+  // Assessments
+  async getAssessments(userId: string): Promise<Assessment[]> {
+    return await db.select().from(assessments).where(eq(assessments.userId, userId)).orderBy(desc(assessments.createdAt));
+  }
+
+  async createAssessment(userId: string, assessment: InsertAssessment): Promise<Assessment> {
+    const [newAssessment] = await db.insert(assessments).values({ ...assessment, userId }).returning();
+    return newAssessment;
+  }
+
+  // Health
+  async getHealthData(userId: string): Promise<HealthData[]> {
+    return await db.select().from(healthData).where(eq(healthData.userId, userId)).orderBy(desc(healthData.date));
+  }
+
+  async createHealthData(userId: string, data: InsertHealthData): Promise<HealthData> {
+    const [newData] = await db.insert(healthData).values({ ...data, userId }).returning();
+    return newData;
+  }
+
+  // Stats
+  async getUserBadges(userId: string): Promise<Badge[]> {
+    // Join badges and userBadges
+    const result = await db.select({
+      id: badges.id,
+      name: badges.name,
+      description: badges.description,
+      icon: badges.icon,
+      category: badges.category
+    })
+    .from(userBadges)
+    .innerJoin(badges, eq(userBadges.badgeId, badges.id))
+    .where(eq(userBadges.userId, userId));
+    
+    return result;
+  }
+
+  async getUserStats(userId: string): Promise<{ points: number, streak: number, tasksCompleted: number }> {
+    // This is a placeholder. In a real app, you'd calculate these or store them in the user table.
+    // For now, let's count completed tasks for "tasksCompleted" and fake points/streak.
+    
+    const completedTasks = await db.select().from(tasks).where(and(eq(tasks.userId, userId), eq(tasks.completed, true)));
+    
+    // Simple points logic: 10 points per task
+    const points = completedTasks.length * 10;
+    
+    // Mock streak
+    const streak = 3; 
+
+    return { points, streak, tasksCompleted: completedTasks.length };
   }
 }
 
-export const storage = new MemStorage();
+export const storage = new DatabaseStorage();
