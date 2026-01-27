@@ -232,22 +232,31 @@ export default function Wellness() {
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Coffee className="w-5 h-5 text-orange-600" />
-                ADHD Nutrition
+                ADHD Nutrition Guide
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
-              <div className="space-y-3">
+              <div className="space-y-4">
                 <div className="p-3 bg-white/80 dark:bg-card/50 rounded-xl border border-orange-100 dark:border-orange-900/30">
-                  <h4 className="font-bold text-sm text-orange-700 dark:text-orange-400 mb-1">Omega-3 Rich</h4>
-                  <p className="text-xs text-muted-foreground">Supports brain function. Try salmon, walnuts, or chia seeds.</p>
+                  <div className="flex justify-between items-start mb-1">
+                    <h4 className="font-bold text-sm text-orange-700 dark:text-orange-400">Omega-3 Rich</h4>
+                    <span className="text-[10px] bg-orange-100 text-orange-700 px-1.5 rounded uppercase font-bold">Level 1</span>
+                  </div>
+                  <p className="text-xs text-muted-foreground">Essential for brain health. Focus on Salmon, Walnuts, and Chia seeds.</p>
                 </div>
                 <div className="p-3 bg-white/80 dark:bg-card/50 rounded-xl border border-orange-100 dark:border-orange-900/30">
-                  <h4 className="font-bold text-sm text-orange-700 dark:text-orange-400 mb-1">High Protein</h4>
-                  <p className="text-xs text-muted-foreground">Eggs, chicken, beans. Great for steady focus.</p>
+                  <div className="flex justify-between items-start mb-1">
+                    <h4 className="font-bold text-sm text-orange-700 dark:text-orange-400">High Protein</h4>
+                    <span className="text-[10px] bg-orange-100 text-orange-700 px-1.5 rounded uppercase font-bold">Level 2</span>
+                  </div>
+                  <p className="text-xs text-muted-foreground">Stable energy. Include Eggs, Chicken, Turkey, and Lentils in your meals.</p>
                 </div>
                 <div className="p-3 bg-white/80 dark:bg-card/50 rounded-xl border border-orange-100 dark:border-orange-900/30">
-                  <h4 className="font-bold text-sm text-orange-700 dark:text-orange-400 mb-1">Complex Carbs</h4>
-                  <p className="text-xs text-muted-foreground">Whole grains to avoid energy crashes.</p>
+                  <div className="flex justify-between items-start mb-1">
+                    <h4 className="font-bold text-sm text-orange-700 dark:text-orange-400">Complex Carbs</h4>
+                    <span className="text-[10px] bg-orange-100 text-orange-700 px-1.5 rounded uppercase font-bold">Level 3</span>
+                  </div>
+                  <p className="text-xs text-muted-foreground">Avoid crashes with Whole Grains, Sweet Potatoes, and Quinoa.</p>
                 </div>
               </div>
             </CardContent>
