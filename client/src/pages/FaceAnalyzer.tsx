@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from "react";
 import { DashboardLayout } from "@/components/DashboardLayout";
 import { Button } from "@/components/ui/button";
-import { Camera, RefreshCcw, Brain, Droplets, Moon, Coffee, Heart, Sun } from "lucide-react";
+import { Camera, RefreshCcw, Brain, Droplets, Moon, Coffee, Heart, Sun, Play } from "lucide-react";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -28,7 +28,7 @@ const ANALYSES: Record<string, AnalysisResult> = {
   },
   stressed: {
     condition: "Stress",
-    question: "You look a little tense. Are you feeling stressed or overwhelmed right now?",
+    question: "You look a little tension. Are you feeling stressed or overwhelmed right now?",
     options: ["Yes, very stressed", "A little", "Not really"],
     cues: ["Tight facial muscles", "Furrowed brows", "Rigid posture"],
     suggestions: [
@@ -62,8 +62,6 @@ const ANALYSES: Record<string, AnalysisResult> = {
     ]
   }
 };
-
-const Play = ({ className }: { className?: string }) => <Sun className={className} />;
 
 export default function FaceAnalyzer() {
   const [analyzing, setAnalyzing] = useState(false);
