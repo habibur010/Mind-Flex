@@ -1,5 +1,5 @@
 import { Link, useLocation } from "wouter";
-import { Home, Gamepad2, Activity, Music, MessageCircle, User, LogOut, CheckSquare } from "lucide-react";
+import { Home, Gamepad2, Activity, Music, MessageCircle, User, LogOut, CheckSquare, Camera } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/hooks/use-auth";
 
@@ -10,6 +10,7 @@ export function Sidebar() {
   const navItems = [
     { icon: Home, label: "Dashboard", href: "/" },
     { icon: CheckSquare, label: "Tasks", href: "/tasks" },
+    { icon: Camera, label: "Face Analyzer", href: "/face-analyzer" },
     { icon: Gamepad2, label: "Games", href: "/games" },
     { icon: Activity, label: "Yoga & Health", href: "/wellness" },
     { icon: Music, label: "Music", href: "/music" },
