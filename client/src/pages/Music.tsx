@@ -3,8 +3,9 @@ import { DashboardLayout } from "@/components/DashboardLayout";
 import { Button } from "@/components/ui/button";
 import { Slider } from "@/components/ui/slider";
 import { Card, CardContent } from "@/components/ui/card";
-import { Play, Pause, SkipBack, SkipForward, Volume2, Music as MusicIcon, ListMusic, Heart } from "lucide-react";
+import { Play, Pause, SkipBack, SkipForward, Volume2, Music as MusicIcon, ListMusic, Heart, Timer } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import { useToast } from "@/hooks/use-toast";
 
 import music1 from "@assets/sleep-music-vol16-195422_1769638343920.mp3";
 import music2 from "@assets/Magical-Moments-chosic.com__1769638343921.mp3";
@@ -16,12 +17,23 @@ const PLAYLIST = [
   { id: 3, title: "Beauty", artist: "Pure Calm", url: music3, duration: "2:58", color: "from-rose-400 to-pink-600" }
 ];
 
+const SLEEP_TIMER_OPTIONS = [
+  { label: "Off", value: 0 },
+  { label: "10 min", value: 10 },
+  { label: "30 min", value: 30 },
+  { label: "60 min", value: 60 }
+];
+
 export default function Music() {
+  const { toast } = useToast();
   const [currentTrackIndex, setCurrentTrackIndex] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
   const [progress, setProgress] = useState(0);
   const [volume, setVolume] = useState(70);
+  const [sleepTimer, setSleepTimer] = useState(0); // in minutes
+  const [timerRemaining, setTimerRemaining] = useState(0); // in seconds
   const audioRef = useRef<HTMLAudioElement>(null);
+  const timerIntervalRef = useRef<NodeJS.Timeout | null>(null);
 
   const currentTrack = PLAYLIST[currentTrackIndex];
 
@@ -34,6 +46,36 @@ export default function Music() {
       }
     }
   }, [isPlaying, currentTrackIndex]);
+
+  useEffect(() => {
+    if (sleepTimer > 0) {
+      setTimerRemaining(sleepTimer * 60);
+      if (timerIntervalRef.current) clearInterval(timerIntervalRef.current);
+      
+      timerIntervalRef.current = setInterval(() => {
+        setTimerRemaining((prev) => {
+          if (prev <= 1) {
+            setIsPlaying(false);
+            setSleepTimer(0);
+            if (timerIntervalRef.current) clearInterval(timerIntervalRef.current);
+            toast({
+              title: "Sleep Timer",
+              description: "Music paused automatically.",
+            });
+            return 0;
+          }
+          return prev - 1;
+        });
+      }, 1000);
+    } else {
+      if (timerIntervalRef.current) clearInterval(timerIntervalRef.current);
+      setTimerRemaining(0);
+    }
+
+    return () => {
+      if (timerIntervalRef.current) clearInterval(timerIntervalRef.current);
+    };
+  }, [sleepTimer]);
 
   useEffect(() => {
     const audio = audioRef.current;
@@ -84,9 +126,28 @@ export default function Music() {
 
   return (
     <DashboardLayout>
-      <div className="mb-8">
-        <h1 className="text-4xl font-bold font-display text-primary">Calm Radio</h1>
-        <p className="text-muted-foreground mt-2">Curated soundscapes to help you focus or unwind.</p>
+      <div className="mb-8 flex justify-between items-end">
+        <div>
+          <h1 className="text-4xl font-bold font-display text-primary">Calm Radio</h1>
+          <p className="text-muted-foreground mt-2">Curated soundscapes to help you focus or unwind.</p>
+        </div>
+        
+        <div className="flex items-center gap-2">
+          <Timer className="w-4 h-4 text-primary" />
+          <div className="flex gap-1">
+            {SLEEP_TIMER_OPTIONS.map((opt) => (
+              <Button
+                key={opt.value}
+                variant={sleepTimer === opt.value ? "default" : "outline"}
+                size="sm"
+                onClick={() => setSleepTimer(opt.value)}
+                className="rounded-full text-[10px] h-7"
+              >
+                {opt.label}
+              </Button>
+            ))}
+          </div>
+        </div>
       </div>
 
       <div className="grid lg:grid-cols-2 gap-12 items-center">
@@ -123,6 +184,11 @@ export default function Music() {
                 <div>
                   <h2 className="text-2xl font-bold font-display mb-1">{currentTrack.title}</h2>
                   <p className="text-muted-foreground font-medium">{currentTrack.artist}</p>
+                  {sleepTimer > 0 && (
+                    <p className="text-[10px] font-black uppercase text-primary mt-2">
+                      Sleep Timer: {Math.floor(timerRemaining / 60)}:{(timerRemaining % 60).toString().padStart(2, '0')}
+                    </p>
+                  )}
                 </div>
 
                 <div className="space-y-2">

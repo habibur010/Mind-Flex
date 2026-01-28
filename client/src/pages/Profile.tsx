@@ -50,7 +50,7 @@ export default function Profile() {
               <div className="absolute -bottom-16 left-8">
                 <div className="relative group">
                   <Avatar className="w-32 h-32 border-4 border-white dark:border-slate-900 shadow-xl">
-                    <AvatarImage src={user?.profilePicture || ""} />
+                    <AvatarImage src={user?.profileImageUrl || ""} />
                     <AvatarFallback className="bg-slate-100 text-primary text-4xl font-bold">
                       {user?.firstName?.charAt(0)}
                     </AvatarFallback>
