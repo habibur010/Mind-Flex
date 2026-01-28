@@ -66,11 +66,24 @@ export const userBadges = pgTable("user_badges", {
   earnedAt: timestamp("earned_at").defaultNow(),
 });
 
+// User profile extension
+export const userProfile = pgTable("user_profile", {
+  id: serial("id").primaryKey(),
+  userId: text("user_id").notNull().unique(),
+  bio: text("bio"),
+  avatarUrl: text("avatar_url"),
+  preferences: jsonb("preferences").$type<{
+    theme: string;
+    notifications: boolean;
+  }>(),
+});
+
 // === SCHEMAS ===
 export const insertTaskSchema = createInsertSchema(tasks).omit({ id: true, createdAt: true });
 export const insertMoodLogSchema = createInsertSchema(moodLogs).omit({ id: true, createdAt: true });
 export const insertAssessmentSchema = createInsertSchema(assessments).omit({ id: true, createdAt: true });
 export const insertHealthDataSchema = createInsertSchema(healthData).omit({ id: true, createdAt: true });
+export const insertUserProfileSchema = createInsertSchema(userProfile).omit({ id: true });
 
 // === EXPLICIT API CONTRACT TYPES ===
 export type Task = typeof tasks.$inferSelect;
@@ -88,6 +101,9 @@ export type InsertHealthData = z.infer<typeof insertHealthDataSchema>;
 
 export type Badge = typeof badges.$inferSelect;
 export type UserBadge = typeof userBadges.$inferSelect;
+
+export type UserProfile = typeof userProfile.$inferSelect;
+export type InsertUserProfile = z.infer<typeof insertUserProfileSchema>;
 
 export interface UserStats {
   points: number;

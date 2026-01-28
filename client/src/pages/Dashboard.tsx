@@ -4,14 +4,29 @@ import { useTasks } from "@/hooks/use-tasks";
 import { useUserStats } from "@/hooks/use-user";
 import { TaskCard } from "@/components/TaskCard";
 import { MoodTracker } from "@/components/MoodTracker";
-import { Zap, Target, Trophy, ArrowRight } from "lucide-react";
+import { Zap, Target, Trophy, ArrowRight, Quote } from "lucide-react";
 import { Link } from "wouter";
-import { format } from "date-fns";
+import { format, differenceInDays } from "date-fns";
+import dashboardBg from "@assets/background-formed-by-pink-peach-blue-blur-space-perfect-desig_1769638325387.avif";
+
+const DAILY_MESSAGES = [
+  "Gratitude first – “I’m thankful for waking up today and having another chance to grow.”",
+  "Fresh start mindset – “Yesterday is gone; today is a blank page I get to write on.”",
+  "Small wins matter – “Even tiny steps forward are progress worth celebrating.”",
+  "Self-kindness – “I don’t need to be perfect; I just need to keep trying.”",
+  "Energy check – “I choose to focus my energy on what uplifts me, not what drains me.”",
+  "Possibility lens – “Something good can happen today, even in unexpected ways.”",
+  "Confidence boost – “I have the skills, strength, and creativity to handle whatever comes.”"
+];
 
 export default function Dashboard() {
   const { user } = useAuth();
   const { data: tasks } = useTasks();
   const { data: stats } = useUserStats();
+
+  const startDate = new Date(2024, 0, 1); // Fixed reference date
+  const dayIndex = differenceInDays(new Date(), startDate) % 7;
+  const dailyMessage = DAILY_MESSAGES[dayIndex];
 
   // Filter tasks for Today
   const todayTasks = tasks?.filter(t => !t.completed).slice(0, 3) || [];
@@ -19,7 +34,7 @@ export default function Dashboard() {
   return (
     <DashboardLayout>
       {/* Welcome Header */}
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-4">
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-4 mb-8">
         <div>
           <h1 className="text-4xl font-bold font-display text-foreground">
             Hi, {user?.firstName || 'Friend'}! 👋
@@ -38,6 +53,22 @@ export default function Dashboard() {
             <p className="text-xs text-muted-foreground font-semibold uppercase tracking-wider">Daily Streak</p>
             <p className="text-xl font-bold text-foreground">{stats?.streak || 0} Days</p>
           </div>
+        </div>
+      </div>
+
+      {/* Daily Message Container */}
+      <div className="relative w-full h-48 rounded-[2rem] overflow-hidden mb-8 shadow-xl group">
+        <img 
+          src={dashboardBg} 
+          alt="Dashboard Background" 
+          className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+        />
+        <div className="absolute inset-0 bg-blue-400/20 backdrop-blur-[2px] transition-colors group-hover:bg-blue-400/10" />
+        <div className="relative h-full flex flex-col items-center justify-center p-8 text-center">
+          <Quote className="w-8 h-8 text-white/40 mb-4" />
+          <p className="text-xl md:text-2xl font-display font-bold text-white drop-shadow-lg max-w-2xl leading-relaxed">
+            {dailyMessage}
+          </p>
         </div>
       </div>
 
@@ -115,19 +146,6 @@ export default function Dashboard() {
               <p className="text-xs text-muted-foreground text-center">
                 {1000 - (stats?.points || 0)} points to next level!
               </p>
-            </div>
-          </div>
-
-          {/* Quote of the Day */}
-          <div className="bg-gradient-to-br from-orange-100 to-amber-50 p-6 rounded-2xl border border-orange-100 shadow-sm relative overflow-hidden">
-            <div className="relative z-10">
-              <h3 className="font-bold font-display text-lg text-orange-900 mb-2">Daily Thought</h3>
-              <p className="italic text-orange-800 font-hand text-lg leading-relaxed">
-                "Your direction is more important than your speed."
-              </p>
-            </div>
-            <div className="absolute -bottom-4 -right-4 text-orange-200 opacity-50">
-              <Zap className="w-24 h-24" />
             </div>
           </div>
         </div>

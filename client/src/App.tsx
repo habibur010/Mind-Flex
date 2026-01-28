@@ -11,6 +11,8 @@ import Games from "@/pages/Games";
 import Chat from "@/pages/Chat";
 import Wellness from "@/pages/Wellness";
 import FaceAnalyzer from "@/pages/FaceAnalyzer";
+import Music from "@/pages/Music";
+import Profile from "@/pages/Profile";
 import NotFound from "@/pages/not-found";
 import { useAuth } from "@/hooks/use-auth";
 import { Loader2 } from "lucide-react";
@@ -43,9 +45,8 @@ function Router() {
       <Route path="/chat" component={Chat} />
       <Route path="/wellness" component={Wellness} />
       <Route path="/face-analyzer" component={FaceAnalyzer} />
-      {/* Add placeholders for other routes to prevent 404s during development */}
-      <Route path="/profile" component={() => <Dashboard />} />
-      <Route path="/music" component={() => <Dashboard />} />
+      <Route path="/music" component={Music} />
+      <Route path="/profile" component={Profile} />
       <Route component={NotFound} />
     </Switch>
   );
