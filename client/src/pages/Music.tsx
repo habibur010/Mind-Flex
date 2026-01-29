@@ -250,7 +250,14 @@ export default function Music() {
             {PLAYLIST.map((track, index) => (
               <div 
                 key={track.id}
-                onClick={() => { setCurrentTrackIndex(index); setIsPlaying(true); }}
+                onClick={() => {
+                  if (currentTrackIndex === index) {
+                    setIsPlaying(!isPlaying);
+                  } else {
+                    setCurrentTrackIndex(index);
+                    setIsPlaying(true);
+                  }
+                }}
                 className={`group flex items-center gap-4 p-4 rounded-[2rem] cursor-pointer transition-all border ${
                   currentTrackIndex === index 
                     ? "bg-primary/5 border-primary/20 shadow-sm" 
