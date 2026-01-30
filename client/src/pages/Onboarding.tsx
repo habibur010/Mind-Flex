@@ -2,9 +2,12 @@ import { useState } from "react";
 import { useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { Brain, ArrowRight, Check, Sparkles } from "lucide-react";
+import { Brain, ArrowRight, Check, Sparkles, Loader2 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "@/lib/utils";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { apiRequest } from "@/lib/queryClient";
+import { useToast } from "@/hooks/use-toast";
 
 const QUESTIONS = [
   {
@@ -69,6 +72,29 @@ export default function Onboarding() {
   const [, setLocation] = useLocation();
   const [currentStep, setCurrentStep] = useState(0);
   const [answers, setAnswers] = useState<Record<string, string | string[]>>({});
+  const queryClient = useQueryClient();
+  const { toast } = useToast();
+
+  const saveOnboarding = useMutation({
+    mutationFn: async (responses: Record<string, string | string[]>) => {
+      return apiRequest("POST", "/api/onboarding/complete", { responses });
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/onboarding/status"] });
+      toast({
+        title: "Welcome to MindFlex!",
+        description: "Your personalized experience is ready.",
+      });
+      setLocation("/");
+    },
+    onError: () => {
+      toast({
+        title: "Something went wrong",
+        description: "Please try again.",
+        variant: "destructive",
+      });
+    },
+  });
 
   const currentQuestion = QUESTIONS[currentStep];
   const totalSteps = QUESTIONS.length;
@@ -99,14 +125,7 @@ export default function Onboarding() {
     if (currentStep < totalSteps - 1) {
       setCurrentStep(currentStep + 1);
     } else {
-      const storedUser = localStorage.getItem("mindflex_temp_user");
-      if (storedUser) {
-        const user = JSON.parse(storedUser);
-        user.onboardingCompleted = true;
-        user.onboardingResponses = answers;
-        localStorage.setItem("mindflex_temp_user", JSON.stringify(user));
-      }
-      window.location.href = "/api/login";
+      saveOnboarding.mutate(answers);
     }
   };
 
@@ -195,11 +214,15 @@ export default function Onboarding() {
 
                 <Button
                   onClick={handleNext}
-                  disabled={!isCurrentAnswered()}
+                  disabled={!isCurrentAnswered() || saveOnboarding.isPending}
                   className="w-full h-14 rounded-xl text-lg font-bold mt-6"
                   data-testid="button-next"
                 >
-                  {currentStep === totalSteps - 1 ? (
+                  {saveOnboarding.isPending ? (
+                    <>
+                      <Loader2 className="w-5 h-5 mr-2 animate-spin" /> Saving...
+                    </>
+                  ) : currentStep === totalSteps - 1 ? (
                     <>
                       Finish & Go to Dashboard <Sparkles className="w-5 h-5 ml-2" />
                     </>

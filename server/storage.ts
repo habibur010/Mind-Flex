@@ -1,10 +1,10 @@
 import { 
-  users, tasks, moodLogs, assessments, healthData, badges, userBadges,
+  users, tasks, moodLogs, assessments, healthData, badges, userBadges, userProfile,
   type User, type InsertTask, type Task, type UpdateTaskRequest,
   type InsertMoodLog, type MoodLog,
   type InsertAssessment, type Assessment,
   type InsertHealthData, type HealthData,
-  type Badge, type UserBadge
+  type Badge, type UserBadge, type UserProfile
 } from "@shared/schema";
 import { db } from "./db";
 import { eq, desc, and } from "drizzle-orm";
@@ -32,6 +32,10 @@ export interface IStorage {
   // User/Badges
   getUserBadges(userId: string): Promise<Badge[]>;
   getUserStats(userId: string): Promise<{ points: number, streak: number, tasksCompleted: number }>;
+
+  // Onboarding
+  getUserProfile(userId: string): Promise<UserProfile | null>;
+  saveOnboarding(userId: string, responses: any): Promise<UserProfile>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -102,18 +106,31 @@ export class DatabaseStorage implements IStorage {
   }
 
   async getUserStats(userId: string): Promise<{ points: number, streak: number, tasksCompleted: number }> {
-    // This is a placeholder. In a real app, you'd calculate these or store them in the user table.
-    // For now, let's count completed tasks for "tasksCompleted" and fake points/streak.
-    
     const completedTasks = await db.select().from(tasks).where(and(eq(tasks.userId, userId), eq(tasks.completed, true)));
-    
-    // Simple points logic: 10 points per task
     const points = completedTasks.length * 10;
-    
-    // Mock streak
     const streak = 3; 
-
     return { points, streak, tasksCompleted: completedTasks.length };
+  }
+
+  async getUserProfile(userId: string): Promise<UserProfile | null> {
+    const [profile] = await db.select().from(userProfile).where(eq(userProfile.userId, userId));
+    return profile || null;
+  }
+
+  async saveOnboarding(userId: string, responses: any): Promise<UserProfile> {
+    const existing = await this.getUserProfile(userId);
+    if (existing) {
+      const [updated] = await db.update(userProfile)
+        .set({ onboardingCompleted: true, onboardingResponses: responses })
+        .where(eq(userProfile.userId, userId))
+        .returning();
+      return updated;
+    } else {
+      const [newProfile] = await db.insert(userProfile)
+        .values({ userId, onboardingCompleted: true, onboardingResponses: responses })
+        .returning();
+      return newProfile;
+    }
   }
 }
 

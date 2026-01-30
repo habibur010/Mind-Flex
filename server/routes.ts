@@ -129,6 +129,25 @@ export async function registerRoutes(
     res.json(userBadges);
   });
 
+  // Onboarding
+  app.get("/api/onboarding/status", isAuthenticated, async (req: any, res) => {
+    const profile = await storage.getUserProfile(req.user.claims.sub);
+    res.json({ 
+      completed: profile?.onboardingCompleted || false,
+      responses: profile?.onboardingResponses || null
+    });
+  });
+
+  app.post("/api/onboarding/complete", isAuthenticated, async (req: any, res) => {
+    try {
+      const { responses } = req.body;
+      const profile = await storage.saveOnboarding(req.user.claims.sub, responses);
+      res.json({ success: true, profile });
+    } catch (err) {
+      res.status(500).json({ message: "Failed to save onboarding" });
+    }
+  });
+
   // Seed badges if empty
   await seedBadges();
 
