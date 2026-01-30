@@ -5,6 +5,9 @@ import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 
 import Landing from "@/pages/Landing";
+import Register from "@/pages/Register";
+import Login from "@/pages/Login";
+import Onboarding from "@/pages/Onboarding";
 import Dashboard from "@/pages/Dashboard";
 import Tasks from "@/pages/Tasks";
 import Games from "@/pages/Games";
@@ -32,6 +35,9 @@ function Router() {
     return (
       <Switch>
         <Route path="/" component={Landing} />
+        <Route path="/register" component={Register} />
+        <Route path="/login" component={Login} />
+        <Route path="/onboarding" component={Onboarding} />
         <Route component={() => { window.location.href = "/"; return null; }} />
       </Switch>
     );
