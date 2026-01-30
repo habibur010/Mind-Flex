@@ -1,8 +1,7 @@
 import { useState, useRef, useEffect } from "react";
 import { DashboardLayout } from "@/components/DashboardLayout";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Send, Bot, User as UserIcon, CheckCircle2, Circle, RefreshCw } from "lucide-react";
+import { Bot, CheckCircle2, Circle, RefreshCw } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface Problem {
@@ -103,7 +102,6 @@ export default function Chat() {
   ]);
   const [selectedProblems, setSelectedProblems] = useState<number[]>([]);
   const [showProblemList, setShowProblemList] = useState(true);
-  const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
 
@@ -149,54 +147,17 @@ export default function Chat() {
         solutions: solutionsData
       }]);
 
-      // Follow-up message
+      // Follow-up message with option to select more problems
       setTimeout(() => {
         setMessages(prev => [...prev, {
           role: 'assistant',
-          content: "Remember, it's okay to take things one step at a time. Would you like to discuss any of these strategies in more detail, or do you have other concerns you'd like help with?",
+          content: "Remember, it's okay to take things one step at a time. You can select more challenges below if you'd like additional strategies.",
           type: 'text'
         }]);
         setIsLoading(false);
+        setShowProblemList(true);
+        setSelectedProblems([]);
       }, 500);
-    }, 1000);
-  };
-
-  const handleSend = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!input.trim() || isLoading) return;
-
-    const userMsg = input;
-    setInput("");
-    setMessages(prev => [...prev, { role: 'user', content: userMsg, type: 'text' }]);
-    setIsLoading(true);
-
-    // Simple response based on keywords
-    setTimeout(() => {
-      let response = "I hear you. Remember, you're doing great by seeking support. Would you like me to show the problem list again so you can explore more strategies?";
-      
-      const lowerMsg = userMsg.toLowerCase();
-      if (lowerMsg.includes("yes") || lowerMsg.includes("more") || lowerMsg.includes("show") || lowerMsg.includes("list")) {
-        response = "Sure! I'll show you the problem list again. Feel free to select any challenges you'd like help with.";
-        setTimeout(() => {
-          setShowProblemList(true);
-          setSelectedProblems([]);
-        }, 500);
-      } else if (lowerMsg.includes("thank")) {
-        response = "You're very welcome! Remember, every small step counts. I'm always here whenever you need support.";
-      } else if (lowerMsg.includes("help") || lowerMsg.includes("struggling")) {
-        response = "I understand. Let me show you the problem list so you can select what you're dealing with, and I'll provide tailored strategies.";
-        setTimeout(() => {
-          setShowProblemList(true);
-          setSelectedProblems([]);
-        }, 500);
-      } else if (lowerMsg.includes("pomodoro") || lowerMsg.includes("timer") || lowerMsg.includes("focus")) {
-        response = "The Pomodoro technique is wonderful! Work for 25 minutes, then take a 5-minute break. After 4 cycles, take a longer 15-30 minute break. This helps maintain focus without burnout. Would you like tips on any other strategies?";
-      } else if (lowerMsg.includes("breathing") || lowerMsg.includes("calm") || lowerMsg.includes("relax")) {
-        response = "Breathing exercises are very effective! Try this: Breathe in slowly for 4 counts, hold for 2 counts, then exhale for 6 counts. Repeat 5-10 times. This activates your body's relaxation response.";
-      }
-
-      setMessages(prev => [...prev, { role: 'assistant', content: response, type: 'text' }]);
-      setIsLoading(false);
     }, 1000);
   };
 
@@ -213,14 +174,14 @@ export default function Chat() {
   return (
     <DashboardLayout>
       <div className="h-[calc(100vh-140px)] flex flex-col bg-card rounded-2xl border border-border shadow-sm overflow-hidden">
-        {/* Chat Header */}
+        {/* Header */}
         <div className="p-4 border-b border-border bg-muted/30 flex items-center justify-between">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center text-primary">
               <Bot className="w-6 h-6" />
             </div>
             <div>
-              <h2 className="font-bold">MindFlex Support</h2>
+              <h2 className="font-bold">Support</h2>
               <p className="text-xs text-muted-foreground">Your ADHD wellness companion</p>
             </div>
           </div>
@@ -246,7 +207,7 @@ export default function Chat() {
                 "w-8 h-8 rounded-full flex items-center justify-center shrink-0",
                 msg.role === 'user' ? "bg-accent/10 text-accent" : "bg-primary/10 text-primary"
               )}>
-                {msg.role === 'user' ? <UserIcon className="w-4 h-4" /> : <Bot className="w-4 h-4" />}
+                <Bot className="w-4 h-4" />
               </div>
               <div className={cn(
                 "p-3 rounded-2xl text-sm leading-relaxed",
@@ -332,28 +293,6 @@ export default function Chat() {
               )}
             </div>
           )}
-        </div>
-
-        {/* Input */}
-        <div className="p-4 border-t border-border bg-background">
-          <form onSubmit={handleSend} className="flex gap-2">
-            <Input 
-              value={input}
-              onChange={e => setInput(e.target.value)}
-              placeholder="Type your message or ask for more help..."
-              data-testid="input-chat-message"
-              className="rounded-full bg-muted/50 border-transparent focus:border-primary focus:bg-background"
-            />
-            <Button 
-              type="submit" 
-              size="icon" 
-              disabled={!input.trim() || isLoading}
-              data-testid="button-send-message"
-              className="rounded-full w-10 h-10 shrink-0"
-            >
-              <Send className="w-4 h-4" />
-            </Button>
-          </form>
         </div>
       </div>
     </DashboardLayout>

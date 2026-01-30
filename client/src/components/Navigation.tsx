@@ -14,7 +14,7 @@ export function Sidebar() {
     { icon: Gamepad2, label: "Games", href: "/games" },
     { icon: Activity, label: "Yoga & Health", href: "/wellness" },
     { icon: Music, label: "Music", href: "/music" },
-    { icon: MessageCircle, label: "Support Chat", href: "/chat" },
+    { icon: MessageCircle, label: "Support", href: "/chat" },
     { icon: User, label: "Profile", href: "/profile" },
   ];
 
