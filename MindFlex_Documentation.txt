@@ -1,0 +1,338 @@
+================================================================================
+                         MINDFLEX - ADHD SUPPORT APPLICATION
+                              USER DOCUMENTATION
+                                  Version 1.0
+================================================================================
+
+TABLE OF CONTENTS
+-----------------
+1. Introduction
+2. Getting Started
+3. Dashboard
+4. Task Management
+5. Brain Games
+6. Yoga & Health (Wellness)
+7. Music Player
+8. Support System
+9. Face Analyzer
+10. Profile & Settings
+11. Points & Achievements System
+
+================================================================================
+1. INTRODUCTION
+================================================================================
+
+MindFlex is a comprehensive web application designed to support individuals 
+with ADHD in managing daily tasks through structured activities, relaxation 
+tools, progress tracking, and personalized support strategies.
+
+Key Features:
+- Daily task management with morning, afternoon, and evening categories
+- Brain games to improve focus and attention
+- Yoga and wellness content for relaxation
+- Music player with calming playlists
+- Problem-based support system with personalized solutions
+- Mood tracking with visual feedback
+- Points and achievement system for motivation
+- Face analysis for detecting fatigue and stress
+
+Design Philosophy:
+- Calming color palette (soft blues, greens, purples)
+- Dyslexia-friendly fonts for improved readability
+- Rounded, friendly interface elements
+- Mobile-responsive design
+
+================================================================================
+2. GETTING STARTED
+================================================================================
+
+Registration & Login:
+- Navigate to the app and click "Get Started" or "Sign In"
+- Fill in basic information (name, email, password)
+- Note: User data is stored locally for privacy - no server-side storage
+- Security Notice: Data is not saved permanently for your protection
+
+Onboarding Process:
+After registration, complete a 5-question onboarding questionnaire:
+1. Primary challenges you face
+2. Preferred learning style
+3. Daily routine preferences
+4. Goals for using MindFlex
+5. Motivation factors
+
+Your responses help personalize your experience.
+
+================================================================================
+3. DASHBOARD
+================================================================================
+
+The Dashboard is your home screen showing:
+
+Daily Message:
+- Inspirational quote that changes daily
+- Designed to set a positive mindset for your day
+
+Today's Focus:
+- View your pending tasks for the day
+- Mark tasks as complete by clicking the checkbox
+- Delete tasks using the trash icon (hover to reveal)
+- Earn points for completing tasks
+
+Mood Tracker:
+- Quick mood logging with emoji-based input
+- Track your emotional patterns over time
+
+Quick Access Cards:
+- Brain Games: Jump into focus-improving activities
+- Breathe & Move: Access yoga and wellness content
+
+Achievements Sidebar:
+- View total points earned
+- Track progress to next level
+- Monitor daily streak
+
+================================================================================
+4. TASK MANAGEMENT
+================================================================================
+
+Task Categories:
+- Morning: Start your day with structured activities
+- Afternoon: Midday tasks and check-ins
+- Evening: Wind-down activities and reflection
+
+Task Features:
+- Add new tasks with title and category
+- Mark tasks complete/incomplete with one click
+- Delete tasks you no longer need
+- Earn points for each completed task (5-15 points based on task)
+
+Tips for Effective Task Management:
+- Break large tasks into smaller, manageable steps
+- Use the Pomodoro technique (25 min focus + 5 min break)
+- Prioritize 3 main tasks per day
+- Celebrate completing each task
+
+================================================================================
+5. BRAIN GAMES
+================================================================================
+
+Three engaging games designed to improve focus and cognitive function:
+
+MEMORY MATCH
+- Classic card-matching game
+- Improves short-term memory
+- Multiple difficulty levels
+- Track your best times
+
+SUDOKU
+- Number puzzle game
+- Enhances logical thinking
+- Various grid sizes available
+- Helps with pattern recognition
+
+REACTION TAPPER
+- Quick-reflex challenge
+- Improves response time
+- Measures and tracks reaction speed
+- Fun way to redirect hyperactive energy
+
+Benefits of Brain Games:
+- Redirect restless energy productively
+- Improve concentration and focus
+- Build problem-solving skills
+- Provide quick mental breaks during work
+
+================================================================================
+6. YOGA & HEALTH (WELLNESS)
+================================================================================
+
+Yoga Content:
+- Guided yoga poses with visual demonstrations
+- Poses suitable for beginners
+- Focus on calming and grounding exercises
+- Recommended poses:
+  * Child's Pose - for relaxation
+  * Tree Pose - for balance and focus
+  * Cat-Cow Stretch - for stress relief
+
+Breathing Exercises:
+- Guided breathing techniques
+- 4-6 breathing pattern (inhale 4, exhale 6)
+- Box breathing for anxiety
+- Visual breathing guides with animations
+
+Health Data Integration:
+- Track wellness metrics
+- Monitor daily progress
+- View health trends over time
+
+================================================================================
+7. MUSIC PLAYER
+================================================================================
+
+Features:
+- Curated playlists for focus and relaxation
+- Background music for study sessions
+- Calming nature sounds
+- Lo-fi beats for concentration
+
+Playlist Categories:
+- Focus & Concentration
+- Relaxation & Sleep
+- Nature Sounds
+- Meditation Music
+
+Usage Tips:
+- Use during task completion for better focus
+- Play calming music before sleep
+- Listen during yoga or breathing exercises
+
+================================================================================
+8. SUPPORT SYSTEM
+================================================================================
+
+The Support section provides personalized strategies for common ADHD challenges.
+
+How It Works:
+1. View the list of 8 common ADHD challenges
+2. Select one or more challenges you're currently facing
+3. Click "Get Solutions" to receive personalized strategies
+4. Review the tailored tips and techniques
+5. Select new challenges anytime for additional support
+
+Available Challenges & Solutions:
+
+CHALLENGE 1: Easily distracted, difficulty finishing tasks
+Solutions:
+- Use timers (Pomodoro technique: 25 min focus + 5 min break)
+- Break tasks into smaller steps
+- Remove distractions (quiet workspace, phone limits)
+
+CHALLENGE 2: Acting without thinking, interrupting, risky decisions
+Solutions:
+- Practice pause techniques (count to 5 before responding)
+- Use role-play games like Simon Says to train impulse control
+- Keep a journal to reflect before acting
+
+CHALLENGE 3: Constant movement, difficulty sitting still
+Solutions:
+- Channel energy into exercise (running, yoga, dance)
+- Use fidget tools (stress balls, doodling)
+- Schedule short movement breaks during study/work
+
+CHALLENGE 4: Anger, stress, mood swings
+Solutions:
+- Breathing exercises (inhale 4, exhale 6)
+- Yoga poses like Child's Pose or Tree Pose
+- Talk to a trusted friend or mentor when emotions rise
+
+CHALLENGE 5: Poor organization, procrastination, forgetfulness
+Solutions:
+- Use planners, to-do lists, or digital apps
+- Color-code tasks for priority
+- Set reminders for deadlines and routines
+
+CHALLENGE 6: Missed deadlines, inconsistent performance
+Solutions:
+- Study in short, focused sessions
+- Ask for clear instructions and feedback
+- Use visual aids (charts, diagrams) to understand better
+
+CHALLENGE 7: Interrupting, forgetting commitments, miscommunication
+Solutions:
+- Practice active listening (repeat back what you heard)
+- Use reminders for birthdays, meetings, promises
+- Be open about ADHD with close friends/family for understanding
+
+CHALLENGE 8: Feeling inadequate, anxiety, depression
+Solutions:
+- Celebrate small wins daily
+- Keep a gratitude journal
+- Seek ADHD coaching or professional support
+
+================================================================================
+9. FACE ANALYZER
+================================================================================
+
+The Face Analyzer uses your device's camera to assess:
+- Signs of fatigue
+- Stress indicators
+- Overall wellness cues
+
+How to Use:
+1. Navigate to Face Analyzer from the sidebar
+2. Allow camera access when prompted
+3. Position your face in the frame
+4. Receive instant feedback on your current state
+5. Get personalized recommendations based on analysis
+
+Privacy Note:
+- All analysis is done locally on your device
+- No images are stored or transmitted
+- Camera access can be revoked at any time
+
+================================================================================
+10. PROFILE & SETTINGS
+================================================================================
+
+Profile Section:
+- View and edit your profile information
+- Review onboarding responses
+- Update preferences
+
+Settings Available:
+- Theme preferences (if available)
+- Notification settings
+- Data management options
+
+================================================================================
+11. POINTS & ACHIEVEMENTS SYSTEM
+================================================================================
+
+Earning Points:
+- Complete tasks: 5-15 points per task
+- Play brain games: Points based on performance
+- Daily check-ins: Bonus points for consistency
+
+Streaks:
+- Maintain daily activity for streak bonuses
+- Longer streaks = greater rewards
+- Streak counter visible on dashboard
+
+Achievements:
+- Unlock badges for milestones
+- Track progress toward goals
+- Celebrate accomplishments
+
+Level System:
+- 100 points to advance each level
+- Progress bar shows advancement
+- New levels unlock additional features
+
+================================================================================
+                              TIPS FOR SUCCESS
+================================================================================
+
+1. Start Small: Begin with 1-3 tasks per day and gradually increase
+2. Use Timers: The Pomodoro technique helps maintain focus
+3. Take Breaks: Regular breaks prevent burnout
+4. Track Mood: Daily mood logging helps identify patterns
+5. Play Games: Brain games provide productive mental breaks
+6. Practice Breathing: Use wellness tools when feeling overwhelmed
+7. Be Kind to Yourself: Celebrate every small win
+
+================================================================================
+                               SUPPORT & HELP
+================================================================================
+
+For additional support:
+- Use the Support section for strategy guidance
+- Practice the recommended techniques consistently
+- Consider seeking professional ADHD coaching for personalized support
+
+Remember: MindFlex is a supportive tool designed to help you thrive. 
+Every step forward, no matter how small, is progress worth celebrating!
+
+================================================================================
+                    Document Version: 1.0 | Date: January 2026
+================================================================================
