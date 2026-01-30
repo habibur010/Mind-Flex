@@ -5,26 +5,24 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Brain, ArrowRight, Check, Sparkles, Loader2 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "@/lib/utils";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 
 const QUESTIONS = [
   {
     id: "struggle",
-    question: "What do you struggle with the most right now?",
+    question: "What do you struggle with most?",
     type: "single",
     options: [
-      { value: "focus", label: "Staying focused" },
+      { value: "focus", label: "Staying focused on tasks" },
+      { value: "starting", label: "Getting started on things" },
+      { value: "organizing", label: "Keeping things organized" },
       { value: "emotions", label: "Managing emotions" },
-      { value: "overwhelmed", label: "Feeling overwhelmed" },
-      { value: "starting", label: "Getting things started" },
-      { value: "routines", label: "Maintaining routines" },
+      { value: "time", label: "Tracking time" },
     ],
   },
   {
-    id: "overwhelmed",
-    question: "How often do you feel mentally overwhelmed during the day?",
+    id: "overwhelm",
+    question: "How often do you feel overwhelmed?",
     type: "single",
     options: [
       { value: "rarely", label: "Rarely" },
@@ -34,36 +32,40 @@ const QUESTIONS = [
     ],
   },
   {
-    id: "productiveTime",
-    question: "When do you feel most productive?",
+    id: "productive_time",
+    question: "When are you most productive?",
     type: "single",
     options: [
-      { value: "morning", label: "Morning" },
+      { value: "morning", label: "Early morning" },
+      { value: "midday", label: "Mid-day" },
       { value: "afternoon", label: "Afternoon" },
       { value: "evening", label: "Evening" },
-      { value: "varies", label: "It changes every day" },
+      { value: "night", label: "Late night" },
+      { value: "varies", label: "It varies a lot" },
     ],
   },
   {
-    id: "moodImpact",
-    question: "How does your mood usually affect your work or studies?",
+    id: "mood_impact",
+    question: "How much does your mood affect your work?",
     type: "single",
     options: [
-      { value: "not_much", label: "It doesn't affect me much" },
-      { value: "lose_focus", label: "I lose focus easily" },
-      { value: "anxious", label: "I feel anxious or stressed" },
-      { value: "avoid", label: "I avoid tasks completely" },
+      { value: "little", label: "Not much" },
+      { value: "some", label: "Somewhat" },
+      { value: "lot", label: "A lot" },
+      { value: "completely", label: "It completely depends on my mood" },
     ],
   },
   {
-    id: "supportNeeded",
-    question: "What kind of support would help you the most?",
+    id: "help_wanted",
+    question: "What would help you the most?",
     type: "multiple",
     options: [
-      { value: "small_steps", label: "Breaking tasks into small steps" },
-      { value: "check_ins", label: "Emotional check-ins" },
-      { value: "calming", label: "Calming exercises (breathing, focus games)" },
-      { value: "reminders", label: "Gentle reminders and motivation" },
+      { value: "tasks", label: "Breaking tasks into smaller steps" },
+      { value: "reminders", label: "Gentle reminders" },
+      { value: "games", label: "Fun brain games" },
+      { value: "relaxation", label: "Relaxation tools" },
+      { value: "tracking", label: "Progress tracking" },
+      { value: "chat", label: "Someone to talk to" },
     ],
   },
 ];
@@ -72,29 +74,8 @@ export default function Onboarding() {
   const [, setLocation] = useLocation();
   const [currentStep, setCurrentStep] = useState(0);
   const [answers, setAnswers] = useState<Record<string, string | string[]>>({});
-  const queryClient = useQueryClient();
+  const [isSaving, setIsSaving] = useState(false);
   const { toast } = useToast();
-
-  const saveOnboarding = useMutation({
-    mutationFn: async (responses: Record<string, string | string[]>) => {
-      return apiRequest("POST", "/api/onboarding/complete", { responses });
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["/api/onboarding/status"] });
-      toast({
-        title: "Welcome to MindFlex!",
-        description: "Your personalized experience is ready.",
-      });
-      setLocation("/");
-    },
-    onError: () => {
-      toast({
-        title: "Something went wrong",
-        description: "Please try again.",
-        variant: "destructive",
-      });
-    },
-  });
 
   const currentQuestion = QUESTIONS[currentStep];
   const totalSteps = QUESTIONS.length;
@@ -113,6 +94,14 @@ export default function Onboarding() {
     }
   };
 
+  const isSelected = (value: string) => {
+    const answer = answers[currentQuestion.id];
+    if (Array.isArray(answer)) {
+      return answer.includes(value);
+    }
+    return answer === value;
+  };
+
   const isCurrentAnswered = () => {
     const answer = answers[currentQuestion.id];
     if (currentQuestion.type === "multiple") {
@@ -125,49 +114,46 @@ export default function Onboarding() {
     if (currentStep < totalSteps - 1) {
       setCurrentStep(currentStep + 1);
     } else {
-      saveOnboarding.mutate(answers);
+      setIsSaving(true);
+      localStorage.setItem("mindflex_onboarding", JSON.stringify(answers));
+      setTimeout(() => {
+        toast({
+          title: "Welcome to MindFlex!",
+          description: "Your personalized experience is ready.",
+        });
+        setLocation("/dashboard");
+      }, 500);
     }
-  };
-
-  const isSelected = (value: string) => {
-    const answer = answers[currentQuestion.id];
-    if (currentQuestion.type === "multiple") {
-      return Array.isArray(answer) && answer.includes(value);
-    }
-    return answer === value;
   };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 flex items-center justify-center p-6">
-      <div className="w-full max-w-xl">
+      <div className="w-full max-w-lg">
         <div className="text-center mb-8">
           <div className="inline-flex items-center gap-2 mb-4">
-            <Brain className="w-8 h-8 text-primary" />
-            <span className="text-2xl font-bold font-display text-foreground">MindFlex</span>
+            <Brain className="w-10 h-10 text-primary" />
+            <span className="text-3xl font-bold font-display text-foreground">MindFlex</span>
           </div>
-          <h2 className="text-xl font-display text-muted-foreground flex items-center justify-center gap-2">
-            <Sparkles className="w-5 h-5 text-yellow-500" />
-            Let's get to know you better
-          </h2>
+          <p className="text-muted-foreground">Let's personalize your experience</p>
         </div>
 
-        <div className="mb-6">
-          <div className="flex justify-between text-sm text-muted-foreground mb-2">
-            <span>Step {currentStep + 1} of {totalSteps}</span>
-            <span>{Math.round(progress)}% complete</span>
-          </div>
-          <div className="h-2 bg-muted rounded-full overflow-hidden">
-            <motion.div
-              className="h-full bg-primary rounded-full"
-              initial={{ width: 0 }}
-              animate={{ width: `${progress}%` }}
-              transition={{ duration: 0.3 }}
-            />
-          </div>
-        </div>
-
-        <Card className="border-none shadow-2xl rounded-[2rem] overflow-hidden">
+        <Card className="border-none shadow-2xl rounded-[2rem]">
           <CardContent className="p-8">
+            <div className="mb-8">
+              <div className="flex justify-between text-sm text-muted-foreground mb-2">
+                <span>Step {currentStep + 1} of {totalSteps}</span>
+                <span>{Math.round(progress)}% complete</span>
+              </div>
+              <div className="h-2 bg-muted rounded-full overflow-hidden">
+                <motion.div
+                  className="h-full bg-primary rounded-full"
+                  initial={{ width: 0 }}
+                  animate={{ width: `${progress}%` }}
+                  transition={{ duration: 0.3 }}
+                />
+              </div>
+            </div>
+
             <AnimatePresence mode="wait">
               <motion.div
                 key={currentStep}
@@ -214,11 +200,11 @@ export default function Onboarding() {
 
                 <Button
                   onClick={handleNext}
-                  disabled={!isCurrentAnswered() || saveOnboarding.isPending}
+                  disabled={!isCurrentAnswered() || isSaving}
                   className="w-full h-14 rounded-xl text-lg font-bold mt-6"
                   data-testid="button-next"
                 >
-                  {saveOnboarding.isPending ? (
+                  {isSaving ? (
                     <>
                       <Loader2 className="w-5 h-5 mr-2 animate-spin" /> Saving...
                     </>
@@ -238,7 +224,7 @@ export default function Onboarding() {
         </Card>
 
         <p className="text-center text-sm text-muted-foreground mt-6">
-          Your answers help us personalize your experience
+          No worries, you can change these anytime!
         </p>
       </div>
     </div>
