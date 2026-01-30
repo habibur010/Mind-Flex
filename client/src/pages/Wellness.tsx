@@ -5,12 +5,12 @@ import { Play, Camera, RefreshCcw, Brain, Droplets, Moon, Coffee, Heart, Sun, In
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { motion, AnimatePresence } from "framer-motion";
 
-import yogaTree from "@/assets/images/yoga-tree.jpg";
-import yogaWarrior from "@/assets/images/yoga-warrior.jpg";
-import yogaChild from "@/assets/images/yoga-child.jpg";
-import yogaCatCow from "@/assets/images/yoga-cat-cow.jpg";
-import yogaForwardBend from "@/assets/images/yoga-forward-bend.jpg";
-import yogaBreathing from "@/assets/images/yoga-breathing.jpg";
+import yogaTree from "@assets/tree_pose_1769782220563.avif";
+import yogaWarrior from "@assets/Warrior_Poses_1769782220564.jpg";
+import yogaChild from "@assets/Child_pose_Balasana_1769782220562.jpg";
+import yogaCatCow from "@assets/cat-cow_1769782220561.jpg";
+import yogaForwardBend from "@assets/Seated-Forward-Bend_1769782220563.jpg";
+import yogaBreathing from "@assets/Alternate_Nostril_Breathing_1769782220561.jpg";
 
 const YOGA_POSES = [
   {
