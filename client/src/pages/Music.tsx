@@ -153,16 +153,16 @@ export default function Music() {
       <div className="grid lg:grid-cols-2 gap-12 items-center">
         {/* Player UI */}
         <div className="space-y-8">
-          <Card className="border-none shadow-2xl rounded-[3rem] overflow-hidden bg-white dark:bg-slate-900 aspect-square max-w-md mx-auto relative group">
+          <Card className="border-none shadow-2xl rounded-[3rem] overflow-hidden bg-white dark:bg-slate-900 min-h-[550px] max-w-lg mx-auto relative group">
             <div className={`absolute inset-0 bg-gradient-to-br ${currentTrack.color} opacity-10`} />
-            <CardContent className="h-full flex flex-col p-12 relative z-10">
-              <div className="flex-1 flex items-center justify-center">
+            <CardContent className="h-full flex flex-col p-10 relative z-10">
+              <div className="flex-1 flex items-center justify-center py-6">
                 <motion.div 
                   key={currentTrack.id}
                   initial={{ scale: 0.8, opacity: 0 }}
                   animate={{ scale: 1, opacity: 1 }}
                   transition={{ type: "spring", damping: 20 }}
-                  className={`w-64 h-64 rounded-[3rem] bg-gradient-to-br ${currentTrack.color} shadow-2xl flex items-center justify-center relative overflow-hidden`}
+                  className={`w-48 h-48 rounded-[2.5rem] bg-gradient-to-br ${currentTrack.color} shadow-2xl flex items-center justify-center relative overflow-hidden`}
                 >
                   <MusicIcon className="w-24 h-24 text-white/40" />
                   {isPlaying && (
@@ -180,10 +180,10 @@ export default function Music() {
                 </motion.div>
               </div>
 
-              <div className="space-y-6 text-center">
+              <div className="space-y-4 text-center mt-4">
                 <div>
-                  <h2 className="text-2xl font-bold font-display mb-1">{currentTrack.title}</h2>
-                  <p className="text-muted-foreground font-medium">{currentTrack.artist}</p>
+                  <h2 className="text-xl font-bold font-display mb-1">{currentTrack.title}</h2>
+                  <p className="text-muted-foreground font-medium text-sm">{currentTrack.artist}</p>
                   {sleepTimer > 0 && (
                     <p className="text-[10px] font-black uppercase text-primary mt-2">
                       Sleep Timer: {Math.floor(timerRemaining / 60)}:{(timerRemaining % 60).toString().padStart(2, '0')}
@@ -191,7 +191,7 @@ export default function Music() {
                   )}
                 </div>
 
-                <div className="space-y-2">
+                <div className="space-y-2 px-2">
                   <Slider 
                     value={[progress]} 
                     max={100} 
@@ -205,18 +205,19 @@ export default function Music() {
                   </div>
                 </div>
 
-                <div className="flex items-center justify-center gap-8">
-                  <Button variant="ghost" size="icon" className="rounded-full text-slate-400 hover:text-primary" onClick={prevTrack}>
+                <div className="flex items-center justify-center gap-6 pt-2 pb-4">
+                  <Button variant="ghost" size="icon" className="rounded-full text-slate-400 hover:text-primary h-12 w-12" onClick={prevTrack}>
                     <SkipBack className="w-6 h-6" />
                   </Button>
                   <Button 
                     size="icon" 
-                    className="w-20 h-20 rounded-full shadow-xl shadow-primary/20 bg-primary hover:bg-primary/90"
+                    className="w-16 h-16 rounded-full shadow-xl shadow-primary/20 bg-primary hover:bg-primary/90"
                     onClick={togglePlay}
+                    data-testid="button-play-pause"
                   >
-                    {isPlaying ? <Pause className="w-8 h-8" /> : <Play className="w-8 h-8 fill-current ml-1" />}
+                    {isPlaying ? <Pause className="w-7 h-7" /> : <Play className="w-7 h-7 fill-current ml-1" />}
                   </Button>
-                  <Button variant="ghost" size="icon" className="rounded-full text-slate-400 hover:text-primary" onClick={nextTrack}>
+                  <Button variant="ghost" size="icon" className="rounded-full text-slate-400 hover:text-primary h-12 w-12" onClick={nextTrack}>
                     <SkipForward className="w-6 h-6" />
                   </Button>
                 </div>
