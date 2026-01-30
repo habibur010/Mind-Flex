@@ -8,7 +8,7 @@ export function Sidebar() {
   const { logout } = useAuth();
 
   const navItems = [
-    { icon: Home, label: "Dashboard", href: "/" },
+    { icon: Home, label: "Dashboard", href: "/dashboard" },
     { icon: CheckSquare, label: "Tasks", href: "/tasks" },
     { icon: Camera, label: "Face Analyzer", href: "/face-analyzer" },
     { icon: Gamepad2, label: "Games", href: "/games" },
@@ -61,9 +61,11 @@ export function MobileNav() {
   const [location] = useLocation();
   
   const navItems = [
-    { icon: Home, href: "/" },
+    { icon: Home, href: "/dashboard" },
     { icon: CheckSquare, href: "/tasks" },
     { icon: Gamepad2, href: "/games" },
+    { icon: Activity, href: "/wellness" },
+    { icon: Music, href: "/music" },
     { icon: MessageCircle, href: "/chat" },
     { icon: User, href: "/profile" },
   ];
