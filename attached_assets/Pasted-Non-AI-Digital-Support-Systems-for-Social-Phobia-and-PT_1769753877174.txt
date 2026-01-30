@@ -1,0 +1,47 @@
+Non-AI Digital Support Systems for Social Phobia and PTSD Management	Technical (Hackathon)	MENTIS008	Non-AI Technology for Trauma-Informed Mental Health Support
+9	MENTIS 24	Non-AI Technical Systems for Postpartum Mental Health Support	Technical (Hackathon)	MENTIS009	Technology for Postpartum Mental Well-being & Family Support
+10	MENTIS 24	Non-AI Technical Systems to Improve Attention and Manage Hyperactivity in School-Going Children and Adolescents	Technical (Hackathon)	MENTIS0010	Non-AI Technology for Focus, Self-Regulation & Classroom Well-being
+11	MENTIS 24	AI-Enabled Systems for Supporting Overall Development in Individuals with Autism	Technical (Hackathon)	MENTIS0011	AI for Neurodiverse Development: Communication, Social, and Personal Skills
+12	MENTIS 24	Non-AI Technical Systems for Learning Support in ADHD & ASD	Technical (Hackathon)	MENTIS0012	Non-AI Technology for Learning Support in ADHD & ASD
+13	MENTIS 24	Non-AI Technical Systems for Managing Insomnia and Sleep Disorders	Technical (Hackathon)	MENTIS0013	Non-AI Technology for Sleep Health and Well-Being
+14	MENTIS 24	Non-AI Digital Tools for Managing Digital Addiction in Adolescents	Technical (Hackathon)	MENTIS0014	Non-AI Technology for Digital Addiction Management and Healthy Screen Habits
+15	MENTIS 24	Non-AI Digital Tools for Managing Digital Addiction in Adolescents	Technical (Hackathon)	MENTIS0015	Non-AI Technology for Digital Addiction Management and Healthy Screen Habits
+16	MENTIS 24	Non-AI Group Support Systems for Individuals with PTSD	Technical (Hackathon)	MENTIS0016	Non-AI Technology for PTSD Group Support & Peer Recovery
+17	MENTIS 24	Non-AI Technical Systems for Emotion Regulation in Anxiety and Depression	Technical (Hackathon)	MENTIS0017	Non-AI Technology for Emotion Regulation and Self-Management
+18	MENTIS 24	AI-Enabled Large-Scale Community Mental Health Screening Systems	Technical (Hackathon)	MENTIS0018	AI for Scalable Community Mental Health Screening & Risk Awareness
+19	MENTIS 24	Non-AI Technical Systems for Community-Level Mental Health Screening	Technical (Hackathon)	MENTIS0019	Non-AI Technology for Large-Scale Mental Health Screening & Awareness
+20	MENTIS 24	Non-AI Digital Public Health Dashboards for Mental Well-Being	Technical (Hackathon)	MENTIS0020	Non-AI Digital Platforms for Community Mental Health Monitoring
+21	MENTIS 24	Role of Technology in Addressing Global Crises and Supporting Mental Health	Technical (Hackathon)	MENTIS0032	Technology for Resilience, Crisis Management, and Community Mental Health
+22	MENTIS 24	Non-AI Technical Systems for Monitoring and Reducing Substance Abuse Relapse	Technical (Hackathon)	MENTIS0022	Non-AI Technology for Relapse Prevention and Peer-Based Substance Abuse Recovery
+23	MENTIS 24	Promoting Mental Health Awareness Among School and College Students	Non-Technical (Ideathon)	MENTIS1023	Creative Strategies for Mental Health Awareness in Youth
+24	MENTIS 24	Community Campaigns for Suicide Prevention and Awareness	Non-Technical (Ideathon)	MENTIS1024	Creative Community Strategies for Suicide Awareness and Prevention
+25	MENTIS 24	Peer-Led Interventions for Anxiety, Depression, and Digital Addiction in Youth	Non-Technical (Ideathon)	MENTIS1025	Peer-Led Strategies for Emotional Resilience and Healthy Digital Habits
+26	MENTIS 24	Community Campaigns for PTSD and Trauma Awareness & Support	Non-Technical (Ideathon)	MENTIS1026	Community Awareness and Support for PTSD and Trauma Recovery
+27	MENTIS 24	Human-Centered Interventions for Gradual Coping with Phobias	Non-Technical (Ideathon)	MENTIS1027	Human-Centered Strategies for Gradual Phobia Coping and Awareness
+28	MENTIS 24	Non-Technical Intervention Models to Support Daily Functioning in ADHD	Non-Technical (Ideathon)	MENTIS1028	Human-Centered Strategies to Enhance Daily Functioning in ADHD
+29	MENTIS 24	Non-Technical Intervention Frameworks to Support Individuals with Autism Spectrum Disorder (ASD)	Non-Technical (Ideathon)	MENTIS1029	Human-Centered Strategies for Social, Communication, and Life Skills Support in ASD
+30	MENTIS 24	Designing Trauma-Informed Environment Frameworks for Safer and Supportive Spaces	Non-Technical (Ideathon)	MENTIS1030	Human-Centered Trauma-Informed Spaces for Schools, Workplaces, and Communities
+31	MENTIS 24	Community Campaigns for Substance Abuse Awareness and Relapse Prevention	Non-Technical (Ideathon)	MENTIS1031	Community-Led Awareness and Support for Substance Abuse Prevention and Recovery
+PROBLEM STATEMENT DETAILS
+×
+Problem Statement ID	MENTIS0012
+Problem Statement Title	Non-AI Technical Systems for Learning Support in ADHD & ASD
+Description	
+Problem Statement
+Children with ADHD and Autism Spectrum Disorder (ASD) often face challenges related to attention, focus, organization, social understanding, and adaptive learning. These difficulties can hinder academic progress and classroom participation. While individualized teaching approaches and therapies are beneficial, there is a need for scalable, structured, and consistent non-AI tools that support daily learning and personal development in school and home environments.
+
+This challenge invites participants to design non-AI technical systems that facilitate focus, engagement, adaptive learning, and skill-building for children with ADHD and ASD, without attempting clinical diagnosis or therapeutic intervention.
+
+Background / Context
+Students with ADHD may struggle with inattention, hyperactivity, and impulsivity, while students with ASD may experience challenges related to social interaction, communication, and executive functioning. Most classroom environments are not optimized for these learning differences, and educators often lack structured tools to consistently support individual needs.
+
+Non-AI systems such as structured activity planners, visual schedules, interactive learning aids, and progress tracking dashboards can improve focus, engagement, and learning outcomes. These tools can also empower teachers, parents, and caregivers to monitor progress and coordinate support effectively.
+
+Expected Technical Solutions
+Structured learning and routine management tools including visual schedules, timers, and task segmentation applications
+Focus and engagement support systems providing step-by-step guidance, break reminders, or simple gamified learning modules
+Behavior and progress tracking platforms for recording observations, learning milestones, attention patterns, and adaptive skill development
+Interactive educational aids such as non-AI quizzes, puzzles, or simulation-based learning activities suited to ADHD/ASD learning styles
+Parent–teacher coordination tools enabling secure sharing of progress updates, feedback, and learning strategies
+Privacy-first and child-safe architectures with consent-based access, minimal data collection, and secure storage compliant with child protection norms
+Note: Solutions must support learning, focus, and engagement only and must not attempt diagnosis or clinical intervention.
