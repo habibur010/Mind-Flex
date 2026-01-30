@@ -76,6 +76,14 @@ export const userProfile = pgTable("user_profile", {
     theme: string;
     notifications: boolean;
   }>(),
+  onboardingCompleted: boolean("onboarding_completed").default(false),
+  onboardingResponses: jsonb("onboarding_responses").$type<{
+    struggle: string;
+    overwhelmed: string;
+    productiveTime: string;
+    moodImpact: string;
+    supportNeeded: string[];
+  }>(),
 });
 
 // === SCHEMAS ===
