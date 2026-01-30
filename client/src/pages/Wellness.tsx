@@ -103,8 +103,8 @@ export default function Wellness() {
                 exit={{ opacity: 0, x: -20 }}
               >
                 <Card className="border-none shadow-xl rounded-[2.5rem] overflow-hidden bg-white dark:bg-slate-900">
-                  <div className="aspect-[3/4] max-h-[400px] relative">
-                    <img src={selectedPose.image} alt={selectedPose.title} className="w-full h-full object-contain bg-slate-100 dark:bg-slate-800" />
+                  <div className="relative">
+                    <img src={selectedPose.image} alt={selectedPose.title} className="w-full h-auto" />
                     <Button 
                       size="icon" 
                       variant="secondary" 
