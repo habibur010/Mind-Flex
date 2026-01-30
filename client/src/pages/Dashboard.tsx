@@ -1,7 +1,4 @@
 import { DashboardLayout } from "@/components/DashboardLayout";
-import { useAuth } from "@/hooks/use-auth";
-import { useTasks } from "@/hooks/use-tasks";
-import { useUserStats } from "@/hooks/use-user";
 import { TaskCard } from "@/components/TaskCard";
 import { MoodTracker } from "@/components/MoodTracker";
 import { Zap, Target, Trophy, ArrowRight, Quote } from "lucide-react";
@@ -10,26 +7,31 @@ import { format, differenceInDays } from "date-fns";
 import dashboardBg from "@assets/background-formed-by-pink-peach-blue-blur-space-perfect-desig_1769638325387.avif";
 
 const DAILY_MESSAGES = [
-  "Gratitude first – “I’m thankful for waking up today and having another chance to grow.”",
-  "Fresh start mindset – “Yesterday is gone; today is a blank page I get to write on.”",
-  "Small wins matter – “Even tiny steps forward are progress worth celebrating.”",
-  "Self-kindness – “I don’t need to be perfect; I just need to keep trying.”",
-  "Energy check – “I choose to focus my energy on what uplifts me, not what drains me.”",
-  "Possibility lens – “Something good can happen today, even in unexpected ways.”",
-  "Confidence boost – “I have the skills, strength, and creativity to handle whatever comes.”"
+  "Gratitude first - I'm thankful for waking up today and having another chance to grow.",
+  "Fresh start mindset - Yesterday is gone; today is a blank page I get to write on.",
+  "Small wins matter - Even tiny steps forward are progress worth celebrating.",
+  "Self-kindness - I don't need to be perfect; I just need to keep trying.",
+  "Energy check - I choose to focus my energy on what uplifts me, not what drains me.",
+  "Possibility lens - Something good can happen today, even in unexpected ways.",
+  "Confidence boost - I have the skills, strength, and creativity to handle whatever comes."
+];
+
+const SAMPLE_TASKS = [
+  { id: 1, title: "Take a 5-minute stretch break", category: "morning", completed: false, points: 10, date: null, userId: "demo", description: null, createdAt: null },
+  { id: 2, title: "Write down 3 things you're grateful for", category: "morning", completed: false, points: 15, date: null, userId: "demo", description: null, createdAt: null },
+  { id: 3, title: "Drink a glass of water", category: "afternoon", completed: false, points: 5, date: null, userId: "demo", description: null, createdAt: null },
 ];
 
 export default function Dashboard() {
-  const { user } = useAuth();
-  const { data: tasks } = useTasks();
-  const { data: stats } = useUserStats();
+  const userName = "Friend";
+  const streak = 0;
+  const points = 0;
 
-  const startDate = new Date(2024, 0, 1); // Fixed reference date
+  const startDate = new Date(2024, 0, 1);
   const dayIndex = differenceInDays(new Date(), startDate) % 7;
   const dailyMessage = DAILY_MESSAGES[dayIndex];
 
-  // Filter tasks for Today
-  const todayTasks = tasks?.filter(t => !t.completed).slice(0, 3) || [];
+  const todayTasks = SAMPLE_TASKS.slice(0, 3);
 
   return (
     <DashboardLayout>
@@ -37,7 +39,7 @@ export default function Dashboard() {
       <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-4 mb-8">
         <div>
           <h1 className="text-4xl font-bold font-display text-foreground">
-            Hi, {user?.firstName || 'Friend'}! 👋
+            Hi, {userName}!
           </h1>
           <p className="text-lg text-muted-foreground mt-2">
             It's {format(new Date(), "EEEE, MMMM do")}. Ready to find your flow?
@@ -51,7 +53,7 @@ export default function Dashboard() {
           </div>
           <div>
             <p className="text-xs text-muted-foreground font-semibold uppercase tracking-wider">Daily Streak</p>
-            <p className="text-xl font-bold text-foreground">{stats?.streak || 0} Days</p>
+            <p className="text-xl font-bold text-foreground">{streak} Days</p>
           </div>
         </div>
       </div>
@@ -92,7 +94,7 @@ export default function Dashboard() {
             
             <div className="space-y-3">
               {todayTasks.length > 0 ? (
-                todayTasks.map(task => <TaskCard key={task.id} task={task} />)
+                todayTasks.map(task => <TaskCard key={task.id} task={task as any} />)
               ) : (
                 <div className="p-8 border border-dashed border-border rounded-2xl text-center">
                   <p className="text-muted-foreground">No pending tasks! Enjoy the calm.</p>
@@ -135,16 +137,16 @@ export default function Dashboard() {
             <div className="space-y-4">
               <div className="flex justify-between items-center text-sm">
                 <span className="text-muted-foreground">Total Points</span>
-                <span className="font-bold text-lg">{stats?.points || 0}</span>
+                <span className="font-bold text-lg">{points}</span>
               </div>
               <div className="w-full bg-muted rounded-full h-2 overflow-hidden">
                 <div 
                   className="bg-primary h-full rounded-full transition-all duration-500" 
-                  style={{ width: `${Math.min(((stats?.points || 0) / 1000) * 100, 100)}%` }} 
+                  style={{ width: `${Math.min((points / 1000) * 100, 100)}%` }} 
                 />
               </div>
               <p className="text-xs text-muted-foreground text-center">
-                {1000 - (stats?.points || 0)} points to next level!
+                {1000 - points} points to next level!
               </p>
             </div>
           </div>
