@@ -1,9 +1,10 @@
+import { useState } from "react";
 import { DashboardLayout } from "@/components/DashboardLayout";
-import { TaskCard } from "@/components/TaskCard";
 import { MoodTracker } from "@/components/MoodTracker";
-import { Zap, Target, Trophy, ArrowRight, Quote } from "lucide-react";
+import { Zap, Target, Trophy, ArrowRight, Quote, Check, Trash2, Clock } from "lucide-react";
 import { Link } from "wouter";
 import { format, differenceInDays } from "date-fns";
+import { cn } from "@/lib/utils";
 import dashboardBg from "@assets/background-formed-by-pink-peach-blue-blur-space-perfect-desig_1769638325387.avif";
 
 const DAILY_MESSAGES = [
@@ -16,22 +17,119 @@ const DAILY_MESSAGES = [
   "Confidence boost - I have the skills, strength, and creativity to handle whatever comes."
 ];
 
-const SAMPLE_TASKS = [
-  { id: 1, title: "Take a 5-minute stretch break", category: "morning", completed: false, points: 10, date: null, userId: "demo", description: null, createdAt: null },
-  { id: 2, title: "Write down 3 things you're grateful for", category: "morning", completed: false, points: 15, date: null, userId: "demo", description: null, createdAt: null },
-  { id: 3, title: "Drink a glass of water", category: "afternoon", completed: false, points: 5, date: null, userId: "demo", description: null, createdAt: null },
+const INITIAL_TASKS = [
+  { id: 1, title: "Take a 5-minute stretch break", category: "morning", completed: false, points: 10 },
+  { id: 2, title: "Write down 3 things you're grateful for", category: "morning", completed: false, points: 15 },
+  { id: 3, title: "Drink a glass of water", category: "afternoon", completed: false, points: 5 },
 ];
+
+interface LocalTask {
+  id: number;
+  title: string;
+  category: string;
+  completed: boolean;
+  points: number;
+}
+
+function LocalTaskCard({ 
+  task, 
+  onToggle, 
+  onDelete 
+}: { 
+  task: LocalTask; 
+  onToggle: () => void; 
+  onDelete: () => void;
+}) {
+  return (
+    <div className={cn(
+      "group relative p-4 rounded-2xl border transition-all duration-300 hover:shadow-lg",
+      task.completed 
+        ? "bg-muted/30 border-border opacity-70" 
+        : "bg-card border-border/50 shadow-sm hover:-translate-y-1"
+    )}>
+      <div className="flex items-start gap-4">
+        <button
+          onClick={onToggle}
+          data-testid={`toggle-task-${task.id}`}
+          className={cn(
+            "mt-1 w-6 h-6 rounded-lg border-2 flex items-center justify-center transition-all duration-200",
+            task.completed
+              ? "bg-green-500 border-green-500 text-white"
+              : "border-muted-foreground/30 hover:border-primary text-transparent hover:bg-primary/5"
+          )}
+        >
+          <Check className="w-4 h-4" strokeWidth={3} />
+        </button>
+
+        <div className="flex-1">
+          <h3 className={cn(
+            "font-semibold text-lg transition-all",
+            task.completed ? "text-muted-foreground line-through decoration-2" : "text-foreground"
+          )}>
+            {task.title}
+          </h3>
+          
+          <div className="flex items-center gap-3 mt-3">
+            <span className={cn(
+              "text-xs px-2 py-1 rounded-full font-medium",
+              task.category === 'morning' ? "bg-orange-100 text-orange-700" :
+              task.category === 'afternoon' ? "bg-blue-100 text-blue-700" :
+              "bg-indigo-100 text-indigo-700"
+            )}>
+              {task.category.charAt(0).toUpperCase() + task.category.slice(1)}
+            </span>
+            <span className="text-xs text-muted-foreground flex items-center gap-1">
+              <Clock className="w-3 h-3" />
+              Today
+            </span>
+            <span className="text-xs text-green-600 font-medium">
+              +{task.points} pts
+            </span>
+          </div>
+        </div>
+
+        <button
+          onClick={onDelete}
+          data-testid={`delete-task-${task.id}`}
+          className="opacity-0 group-hover:opacity-100 p-2 text-muted-foreground hover:text-destructive transition-all"
+        >
+          <Trash2 className="w-4 h-4" />
+        </button>
+      </div>
+    </div>
+  );
+}
 
 export default function Dashboard() {
   const userName = "Friend";
-  const streak = 0;
-  const points = 0;
+  const [tasks, setTasks] = useState<LocalTask[]>(INITIAL_TASKS);
+  const [points, setPoints] = useState(0);
+  const streak = 1;
 
   const startDate = new Date(2024, 0, 1);
   const dayIndex = differenceInDays(new Date(), startDate) % 7;
   const dailyMessage = DAILY_MESSAGES[dayIndex];
 
-  const todayTasks = SAMPLE_TASKS.slice(0, 3);
+  const handleToggleTask = (taskId: number) => {
+    setTasks(prev => prev.map(task => {
+      if (task.id === taskId) {
+        const newCompleted = !task.completed;
+        if (newCompleted) {
+          setPoints(p => p + task.points);
+        } else {
+          setPoints(p => Math.max(0, p - task.points));
+        }
+        return { ...task, completed: newCompleted };
+      }
+      return task;
+    }));
+  };
+
+  const handleDeleteTask = (taskId: number) => {
+    setTasks(prev => prev.filter(task => task.id !== taskId));
+  };
+
+  const incompleteTasks = tasks.filter(t => !t.completed);
 
   return (
     <DashboardLayout>
@@ -93,15 +191,39 @@ export default function Dashboard() {
             </div>
             
             <div className="space-y-3">
-              {todayTasks.length > 0 ? (
-                todayTasks.map(task => <TaskCard key={task.id} task={task as any} />)
+              {incompleteTasks.length > 0 ? (
+                incompleteTasks.map(task => (
+                  <LocalTaskCard 
+                    key={task.id} 
+                    task={task} 
+                    onToggle={() => handleToggleTask(task.id)}
+                    onDelete={() => handleDeleteTask(task.id)}
+                  />
+                ))
               ) : (
                 <div className="p-8 border border-dashed border-border rounded-2xl text-center">
-                  <p className="text-muted-foreground">No pending tasks! Enjoy the calm.</p>
-                  <Link href="/tasks" className="mt-4 inline-block px-4 py-2 bg-primary/10 text-primary rounded-lg font-medium">Add a Task</Link>
+                  <p className="text-muted-foreground">All tasks completed! Great job!</p>
+                  <Link href="/tasks" className="mt-4 inline-block px-4 py-2 bg-primary/10 text-primary rounded-lg font-medium">Add More Tasks</Link>
                 </div>
               )}
             </div>
+
+            {/* Show completed tasks */}
+            {tasks.filter(t => t.completed).length > 0 && (
+              <div className="mt-4">
+                <p className="text-sm text-muted-foreground mb-2">Completed today:</p>
+                <div className="space-y-2">
+                  {tasks.filter(t => t.completed).map(task => (
+                    <LocalTaskCard 
+                      key={task.id} 
+                      task={task} 
+                      onToggle={() => handleToggleTask(task.id)}
+                      onDelete={() => handleDeleteTask(task.id)}
+                    />
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
 
           {/* Quick Access Cards */}
@@ -142,11 +264,11 @@ export default function Dashboard() {
               <div className="w-full bg-muted rounded-full h-2 overflow-hidden">
                 <div 
                   className="bg-primary h-full rounded-full transition-all duration-500" 
-                  style={{ width: `${Math.min((points / 1000) * 100, 100)}%` }} 
+                  style={{ width: `${Math.min((points / 100) * 100, 100)}%` }} 
                 />
               </div>
               <p className="text-xs text-muted-foreground text-center">
-                {1000 - points} points to next level!
+                {Math.max(0, 100 - points)} points to next level!
               </p>
             </div>
           </div>
