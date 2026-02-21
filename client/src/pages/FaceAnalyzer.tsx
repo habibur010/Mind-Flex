@@ -65,17 +65,35 @@ const ANALYSES: Record<string, AnalysisResult> = {
 
 export default function FaceAnalyzer() {
   const [analyzing, setAnalyzing] = useState(false);
+  const [cameraActive, setCameraActive] = useState(false);
   const [result, setResult] = useState<AnalysisResult | null>(null);
   const [confirmed, setConfirmed] = useState(false);
   const videoRef = useRef<HTMLVideoElement>(null);
+  const streamRef = useRef<MediaStream | null>(null);
+
+  const stopCamera = () => {
+    if (streamRef.current) {
+      streamRef.current.getTracks().forEach(track => track.stop());
+      streamRef.current = null;
+    }
+    if (videoRef.current) {
+      videoRef.current.srcObject = null;
+    }
+    setCameraActive(false);
+  };
 
   const startAnalysis = () => {
+    stopCamera();
     setAnalyzing(true);
     setResult(null);
     setConfirmed(false);
     
     navigator.mediaDevices.getUserMedia({ video: true }).then(stream => {
-      if (videoRef.current) videoRef.current.srcObject = stream;
+      streamRef.current = stream;
+      if (videoRef.current) {
+        videoRef.current.srcObject = stream;
+      }
+      setCameraActive(true);
     }).catch(console.error);
 
     setTimeout(() => {
@@ -83,14 +101,8 @@ export default function FaceAnalyzer() {
       const randomKey = keys[Math.floor(Math.random() * keys.length)];
       setResult(ANALYSES[randomKey]);
       setAnalyzing(false);
+      stopCamera();
     }, 3000);
-  };
-
-  const stopCamera = () => {
-    if (videoRef.current?.srcObject) {
-      const stream = videoRef.current.srcObject as MediaStream;
-      stream.getTracks().forEach(track => track.stop());
-    }
   };
 
   useEffect(() => {
@@ -114,21 +126,33 @@ export default function FaceAnalyzer() {
           </CardHeader>
           <CardContent className="p-8 space-y-8">
             <div className="relative aspect-video bg-slate-900 rounded-[2rem] overflow-hidden shadow-inner group">
-              {analyzing ? (
-                <div className="absolute inset-0 flex flex-col items-center justify-center text-white z-10 bg-slate-900/60 backdrop-blur-sm">
+              <video ref={videoRef} autoPlay muted playsInline className={`w-full h-full object-cover ${cameraActive ? 'block' : 'hidden'}`} />
+              
+              {analyzing && cameraActive && (
+                <div className="absolute inset-0 flex flex-col items-center justify-center text-white z-10 bg-slate-900/40">
                   <div className="w-24 h-24 border-4 border-primary border-t-transparent rounded-full animate-spin mb-6" />
                   <p className="text-2xl font-bold animate-pulse font-display">Analyzing facial patterns...</p>
                   <p className="text-sm opacity-60 mt-2">Checking blinking, tension, and focus</p>
                 </div>
-              ) : result ? (
-                <video ref={videoRef} autoPlay muted playsInline className="w-full h-full object-cover opacity-60" />
-              ) : (
+              )}
+
+              {!cameraActive && !result && !analyzing && (
                 <div className="absolute inset-0 flex flex-col items-center justify-center text-slate-500">
                   <div className="w-20 h-20 bg-slate-800 rounded-full flex items-center justify-center mb-6">
                     <Camera className="w-10 h-10 opacity-40" />
                   </div>
                   <p className="text-lg font-medium">Ready for your daily scan</p>
                   <p className="text-sm opacity-60 max-w-xs text-center mt-2">Your data stays private and is only used for immediate suggestions.</p>
+                </div>
+              )}
+
+              {!cameraActive && result && (
+                <div className="absolute inset-0 flex flex-col items-center justify-center text-slate-400">
+                  <div className="w-20 h-20 bg-slate-800 rounded-full flex items-center justify-center mb-4">
+                    <Brain className="w-10 h-10 text-primary opacity-60" />
+                  </div>
+                  <p className="text-lg font-medium text-primary">Scan Complete</p>
+                  <p className="text-sm opacity-60 mt-1">Camera released. See your results below.</p>
                 </div>
               )}
               
