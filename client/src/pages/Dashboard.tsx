@@ -5,6 +5,7 @@ import { Zap, Target, Trophy, ArrowRight, Quote, Check, Trash2, Clock } from "lu
 import { Link } from "wouter";
 import { format, differenceInDays } from "date-fns";
 import { cn } from "@/lib/utils";
+import { usePoints } from "@/hooks/use-points";
 import dashboardBg from "@assets/background-formed-by-pink-peach-blue-blur-space-perfect-desig_1769638325387.avif";
 
 const DAILY_MESSAGES = [
@@ -103,8 +104,7 @@ function LocalTaskCard({
 export default function Dashboard() {
   const userName = "Friend";
   const [tasks, setTasks] = useState<LocalTask[]>(INITIAL_TASKS);
-  const [points, setPoints] = useState(0);
-  const streak = 1;
+  const { points, streak, addPoints, removePoints, incrementTasksCompleted, decrementTasksCompleted } = usePoints();
 
   const startDate = new Date(2024, 0, 1);
   const dayIndex = differenceInDays(new Date(), startDate) % 7;
@@ -115,9 +115,11 @@ export default function Dashboard() {
       if (task.id === taskId) {
         const newCompleted = !task.completed;
         if (newCompleted) {
-          setPoints(p => p + task.points);
+          addPoints(task.points);
+          incrementTasksCompleted();
         } else {
-          setPoints(p => Math.max(0, p - task.points));
+          removePoints(task.points);
+          decrementTasksCompleted();
         }
         return { ...task, completed: newCompleted };
       }
