@@ -98,7 +98,7 @@ interface ChatMessage {
   content: string;
 }
 
-const N8N_WEBHOOK_URL = "https://habibur090.app.n8n.cloud/webhook/e88a87ef-b2e3-4fb8-a6e0-19e48adae0da/chat";
+const N8N_CHAT_ENDPOINT = "/api/n8n-chat";
 
 const QUICK_PROMPTS = [
   "I'm feeling overwhelmed today",
@@ -330,19 +330,8 @@ function N8NChatbot() {
     setChatMessages(prev => [...prev, { role: 'user', content: text }]);
     setIsTyping(true);
 
-    if (!N8N_WEBHOOK_URL) {
-      setTimeout(() => {
-        setChatMessages(prev => [...prev, {
-          role: 'assistant',
-          content: getOfflineResponse(text)
-        }]);
-        setIsTyping(false);
-      }, 1200);
-      return;
-    }
-
     try {
-      const response = await fetch(N8N_WEBHOOK_URL, {
+      const response = await fetch(N8N_CHAT_ENDPOINT, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ 
@@ -389,13 +378,8 @@ function N8NChatbot() {
     <div className="flex-1 flex flex-col overflow-hidden">
       <div className="p-3 border-b border-border bg-muted/20 flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <div className={cn(
-            "w-2 h-2 rounded-full",
-            N8N_WEBHOOK_URL ? "bg-green-500" : "bg-amber-500"
-          )} />
-          <p className="text-xs text-muted-foreground">
-            {N8N_WEBHOOK_URL ? "Connected to n8n AI" : "Offline mode (connect n8n for full AI)"}
-          </p>
+          <div className="w-2 h-2 rounded-full bg-green-500" />
+          <p className="text-xs text-muted-foreground">Connected to n8n AI</p>
         </div>
         <Button 
           variant="ghost" 

@@ -148,6 +148,34 @@ export async function registerRoutes(
     }
   });
 
+  // n8n chatbot proxy
+  app.post("/api/n8n-chat", async (req, res) => {
+    try {
+      const { chatInput, sessionId } = req.body;
+      if (!chatInput) {
+        return res.status(400).json({ message: "chatInput is required" });
+      }
+
+      const n8nUrl = "https://habibur090.app.n8n.cloud/webhook/e88a87ef-b2e3-4fb8-a6e0-19e48adae0da/chat";
+      const response = await fetch(n8nUrl, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ chatInput, sessionId: sessionId || "mindflex-default" })
+      });
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        return res.status(response.status).json({ message: errorText || "n8n request failed" });
+      }
+
+      const data = await response.json();
+      res.json(data);
+    } catch (err: any) {
+      console.error("n8n proxy error:", err.message);
+      res.status(500).json({ message: "Failed to connect to AI service" });
+    }
+  });
+
   // Seed badges if empty
   await seedBadges();
 
