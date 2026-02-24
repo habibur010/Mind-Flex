@@ -98,7 +98,7 @@ interface ChatMessage {
   content: string;
 }
 
-const N8N_WEBHOOK_URL = "";
+const N8N_WEBHOOK_URL = "https://habibur090.app.n8n.cloud/webhook/e88a87ef-b2e3-4fb8-a6e0-19e48adae0da/chat";
 
 const QUICK_PROMPTS = [
   "I'm feeling overwhelmed today",
@@ -312,6 +312,7 @@ function N8NChatbot() {
   const [error, setError] = useState<string | null>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+  const sessionIdRef = useRef(`mindflex-${Date.now()}`);
 
   useEffect(() => {
     if (scrollRef.current) {
@@ -345,16 +346,15 @@ function N8NChatbot() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ 
-          message: text,
-          sessionId: 'mindflex-user',
-          timestamp: new Date().toISOString()
+          chatInput: text,
+          sessionId: sessionIdRef.current
         })
       });
 
       if (!response.ok) throw new Error('Failed to get response');
 
       const data = await response.json();
-      const botReply = data.output || data.response || data.message || data.text || "I received your message but couldn't process it properly. Please try again.";
+      const botReply = data.output || data.response || data.message || data.text || (typeof data === 'string' ? data : "I received your message but couldn't process it properly. Please try again.");
 
       setChatMessages(prev => [...prev, { role: 'assistant', content: botReply }]);
     } catch (err) {
@@ -382,6 +382,7 @@ function N8NChatbot() {
     }]);
     setInput("");
     setError(null);
+    sessionIdRef.current = `mindflex-${Date.now()}`;
   };
 
   return (
