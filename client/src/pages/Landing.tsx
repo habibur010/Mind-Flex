@@ -26,7 +26,7 @@ export default function Landing() {
               </span>
             </h1>
             <p className="text-xl text-muted-foreground max-w-lg leading-relaxed">
-              A playful, supportive space designed for ADHD minds. Track tasks, play focus games, and find your daily rhythm.
+              A playful, supportive space designed for focused minds. Track tasks, play focus games, and find your daily rhythm.
             </p>
             <div className="flex gap-4">
               <Link href="/register" className="px-8 py-4 rounded-full bg-primary text-primary-foreground font-bold text-lg shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all flex items-center gap-2" data-testid="button-get-started">
