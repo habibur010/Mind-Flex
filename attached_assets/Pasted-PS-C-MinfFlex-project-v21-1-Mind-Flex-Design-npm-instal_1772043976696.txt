@@ -1,0 +1,51 @@
+PS C:\MinfFlex\project\v21.1\Mind-Flex-Design> npm install
+
+added 498 packages, and audited 499 packages in 19s
+
+84 packages are looking for funding
+  run `npm fund` for details
+
+3 vulnerabilities (1 low, 1 moderate, 1 high)
+
+To address all issues, run:
+  npm audit fix
+
+Run `npm audit` for details.
+PS C:\MinfFlex\project\v21.1\Mind-Flex-Design> npm install cross-env dotenv
+
+added 2 packages, and audited 501 packages in 2s
+
+84 packages are looking for funding
+  run `npm fund` for details
+
+3 vulnerabilities (1 low, 1 moderate, 1 high)
+
+To address all issues, run:
+  npm audit fix
+
+Run `npm audit` for details.
+PS C:\MinfFlex\project\v21.1\Mind-Flex-Design> npm run dev
+
+> rest-express@1.0.0 dev
+> cross-env NODE_ENV=development tsx server/index.ts
+
+file:///C:/MinfFlex/project/v21.1/Mind-Flex-Design/node_modules/openid-client/build/index.js:89
+    const err = new TypeError(message, { cause });
+                ^
+
+TypeError: "clientId" must be a non-empty string
+    at CodedTypeError (C:\MinfFlex\project\v21.1\Mind-Flex-Design\node_modules\openid-client\src\index.ts:839:15)
+    at new Configuration (C:\MinfFlex\project\v21.1\Mind-Flex-Design\node_modules\openid-client\src\index.ts:1849:13)
+    at Module.discovery (C:\MinfFlex\project\v21.1\Mind-Flex-Design\node_modules\openid-client\src\index.ts:1281:20)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at async memoize.maxAge (C:\MinfFlex\project\v21.1\Mind-Flex-Design\server\replit_integrations\auth\replitAuth.ts:13:12)
+    at async setupAuth (C:\MinfFlex\project\v21.1\Mind-Flex-Design\server\replit_integrations\auth\replitAuth.ts:69:18)
+    at async registerRoutes (C:\MinfFlex\project\v21.1\Mind-Flex-Design\server\routes.ts:16:3)
+    at async <anonymous> (C:\MinfFlex\project\v21.1\Mind-Flex-Design\server\index.ts:64:3) {
+  code: 'ERR_INVALID_ARG_TYPE',
+  [cause]: undefined
+}
+
+Node.js v24.13.0
+Assertion failed: !(handle->flags & UV_HANDLE_CLOSING), file src\win\async.c, line 76
+PS C:\MinfFlex\project\v21.1\Mind-Flex-Design> 
