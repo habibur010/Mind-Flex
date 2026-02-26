@@ -34,7 +34,7 @@ export function getSession() {
     saveUninitialized: false,
     cookie: {
       httpOnly: true,
-      secure: true,
+      secure: !!process.env.REPL_ID,
       maxAge: sessionTtl,
     },
   });

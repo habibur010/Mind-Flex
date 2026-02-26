@@ -10,6 +10,10 @@ export function registerImageRoutes(app: Express): void {
         return res.status(400).json({ error: "Prompt is required" });
       }
 
+      if (!openai) {
+        return res.status(503).json({ error: "AI service not configured. Set AI_INTEGRATIONS_OPENAI_API_KEY to enable image generation." });
+      }
+
       const response = await openai.images.generate({
         model: "gpt-image-1",
         prompt,
