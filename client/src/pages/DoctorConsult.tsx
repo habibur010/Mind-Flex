@@ -54,8 +54,8 @@ const DOCTORS: Doctor[] = [
     website: "https://www.cognitivewellness.com",
     location: "Bangalore, Karnataka",
     rating: 4.7,
-    about: "Expert in Cognitive Behavioral Therapy (CBT) for ADHD. Focuses on executive function training, time management skills, and emotional regulation techniques.",
-    tags: ["CBT", "ADHD Coaching", "Executive Function"],
+    about: "Expert in Cognitive Behavioral Therapy (CBT) for ADHD and anxiety disorders. Focuses on executive function training, time management skills, and emotional regulation techniques.",
+    tags: ["CBT", "ADHD Coaching", "Anxiety", "Executive Function"],
   },
   {
     id: "3",
@@ -70,8 +70,8 @@ const DOCTORS: Doctor[] = [
     email: "dr.ananya@neurominds.in",
     location: "Ahmedabad, Gujarat",
     rating: 4.9,
-    about: "Combines neurological assessment with psychiatric care for comprehensive ADHD evaluation. Specialized in comorbid conditions like anxiety and sleep disorders with ADHD.",
-    tags: ["Neuropsychiatry", "Sleep Disorders", "Comprehensive Assessment"],
+    about: "Combines neurological assessment with psychiatric care for comprehensive evaluation. Specialized in ADHD, epilepsy, migraine, and comorbid conditions like anxiety and sleep disorders.",
+    tags: ["Neuropsychiatry", "Sleep Disorders", "ADHD", "Epilepsy"],
   },
   {
     id: "4",
@@ -87,13 +87,13 @@ const DOCTORS: Doctor[] = [
     website: "https://www.youngmindsclinic.org",
     location: "Delhi NCR",
     rating: 4.6,
-    about: "Specializes in ADHD diagnosis and treatment for children and teenagers. Works closely with families and schools to create supportive environments.",
-    tags: ["Child ADHD", "Family Therapy", "School Intervention"],
+    about: "Specializes in ADHD, autism spectrum, learning disabilities, and behavioral issues in children and teenagers. Works closely with families and schools to create supportive environments.",
+    tags: ["Child ADHD", "Autism", "Learning Disabilities", "Family Therapy"],
   },
   {
     id: "5",
     name: "Dr. Meera Nair",
-    specialty: "Behavioral Therapist",
+    specialty: "Behavioral Therapist & Wellness Coach",
     qualification: "MSc (Psychology), Certified ADHD Coach",
     experience: "8+ years",
     languages: ["English", "Hindi", "Malayalam"],
@@ -104,8 +104,8 @@ const DOCTORS: Doctor[] = [
     website: "https://www.adhdcoaching.in",
     location: "Online (Pan-India)",
     rating: 4.8,
-    about: "Certified ADHD coach offering practical strategies for daily life management. Specializes in habit building, productivity systems, and emotional well-being for adults with ADHD.",
-    tags: ["ADHD Coaching", "Habit Building", "Productivity"],
+    about: "Certified coach offering practical strategies for daily life management. Specializes in ADHD, stress management, habit building, and emotional well-being for adults.",
+    tags: ["ADHD Coaching", "Stress Management", "Habit Building", "Productivity"],
   },
   {
     id: "6",
@@ -120,8 +120,158 @@ const DOCTORS: Doctor[] = [
     email: "dr.suresh@mentalhealthfirst.in",
     location: "Pune, Maharashtra",
     rating: 4.5,
-    about: "Senior psychiatrist with extensive experience in treating attention and mood disorders. Known for thorough diagnostic assessments and personalized treatment plans.",
-    tags: ["Mood Disorders", "Attention Disorders", "Diagnosis"],
+    about: "Senior psychiatrist with extensive experience in treating depression, bipolar disorder, attention disorders, and OCD. Known for thorough diagnostic assessments and personalized treatment plans.",
+    tags: ["Depression", "Bipolar Disorder", "OCD", "Mood Disorders"],
+  },
+  {
+    id: "7",
+    name: "Dr. Kavitha Rajan",
+    specialty: "Clinical Psychologist — Anxiety & Trauma",
+    qualification: "MPhil (Clinical Psychology), PhD, RCI Licensed",
+    experience: "14+ years",
+    languages: ["English", "Hindi", "Kannada"],
+    availability: "Mon-Fri, 9 AM - 6 PM",
+    consultType: ["In-Person", "Video Call"],
+    phone: "+91-91234-56789",
+    email: "dr.kavitha@healingminds.in",
+    website: "https://www.healingmindstherapy.in",
+    location: "Bangalore, Karnataka",
+    rating: 4.9,
+    about: "Specializes in anxiety disorders, PTSD, panic attacks, and trauma recovery. Uses EMDR and CBT techniques to help patients process traumatic experiences and manage chronic anxiety.",
+    tags: ["Anxiety", "PTSD", "Panic Disorder", "Trauma", "EMDR"],
+  },
+  {
+    id: "8",
+    name: "Dr. Arjun Reddy",
+    specialty: "Psychiatrist — Depression & Bipolar",
+    qualification: "MBBS, MD (Psychiatry), NIMHANS",
+    experience: "16+ years",
+    languages: ["English", "Hindi", "Telugu"],
+    availability: "Mon-Sat, 10 AM - 5 PM",
+    consultType: ["In-Person", "Video Call", "Phone"],
+    phone: "+91-82345-67890",
+    email: "dr.arjun@mindbalance.in",
+    website: "https://www.mindbalanceclinic.in",
+    location: "Hyderabad, Telangana",
+    rating: 4.7,
+    about: "Expert in treating major depressive disorder, bipolar disorder, and treatment-resistant depression. Combines medication management with psychotherapy for holistic care.",
+    tags: ["Depression", "Bipolar Disorder", "Treatment-Resistant Depression", "Medication"],
+  },
+  {
+    id: "9",
+    name: "Dr. Sneha Gupta",
+    specialty: "Psychotherapist — OCD & Phobias",
+    qualification: "PhD (Psychology), Certified ERP Therapist",
+    experience: "11+ years",
+    languages: ["English", "Hindi"],
+    availability: "Tue-Sat, 11 AM - 7 PM",
+    consultType: ["In-Person", "Video Call"],
+    phone: "+91-73456-78901",
+    email: "dr.sneha@ocdrecovery.in",
+    location: "Delhi NCR",
+    rating: 4.8,
+    about: "Specializes in Obsessive-Compulsive Disorder and specific phobias using Exposure and Response Prevention (ERP). Also treats social anxiety, health anxiety, and body dysmorphic disorder.",
+    tags: ["OCD", "Phobias", "Social Anxiety", "ERP Therapy", "Body Dysmorphia"],
+  },
+  {
+    id: "10",
+    name: "Dr. Fatima Khan",
+    specialty: "Psychiatrist — Sleep & Eating Disorders",
+    qualification: "MBBS, MD (Psychiatry), Fellowship in Sleep Medicine",
+    experience: "13+ years",
+    languages: ["English", "Hindi", "Urdu"],
+    availability: "Mon-Fri, 9 AM - 5 PM",
+    consultType: ["In-Person", "Video Call"],
+    phone: "+91-64567-89012",
+    email: "dr.fatima@sleepwell.in",
+    website: "https://www.sleepwellclinic.in",
+    location: "Chennai, Tamil Nadu",
+    rating: 4.6,
+    about: "Dual expertise in sleep disorders (insomnia, sleep apnea, circadian rhythm disorders) and eating disorders (anorexia, bulimia, binge eating). Focuses on the connection between sleep, nutrition, and mental health.",
+    tags: ["Insomnia", "Sleep Disorders", "Eating Disorders", "Anorexia", "Bulimia"],
+  },
+  {
+    id: "11",
+    name: "Dr. Rohit Saxena",
+    specialty: "Addiction Psychiatrist",
+    qualification: "MBBS, MD (Psychiatry), Certificate in Addiction Medicine",
+    experience: "17+ years",
+    languages: ["English", "Hindi"],
+    availability: "Mon-Sat, 8 AM - 4 PM",
+    consultType: ["In-Person", "Phone"],
+    phone: "+91-55678-90123",
+    email: "dr.rohit@recoverypath.in",
+    website: "https://www.recoverypathclinic.in",
+    location: "Lucknow, Uttar Pradesh",
+    rating: 4.5,
+    about: "Specializes in substance use disorders, behavioral addictions (gaming, internet, gambling), and dual diagnosis treatment. Provides comprehensive rehabilitation support and relapse prevention.",
+    tags: ["Addiction", "Substance Abuse", "Dual Diagnosis", "Rehabilitation", "Gaming Addiction"],
+  },
+  {
+    id: "12",
+    name: "Dr. Lakshmi Iyer",
+    specialty: "Geriatric Psychiatrist",
+    qualification: "MBBS, MD (Psychiatry), Fellowship in Geriatric Psychiatry",
+    experience: "12+ years",
+    languages: ["English", "Hindi", "Tamil", "Malayalam"],
+    availability: "Mon-Fri, 10 AM - 4 PM",
+    consultType: ["In-Person", "Video Call", "Phone"],
+    phone: "+91-46789-01234",
+    email: "dr.lakshmi@eldercare.in",
+    location: "Kochi, Kerala",
+    rating: 4.7,
+    about: "Focuses on mental health in elderly patients including dementia, Alzheimer's, late-life depression, anxiety, and cognitive decline. Provides caregiver support and family counseling.",
+    tags: ["Dementia", "Alzheimer's", "Elderly Care", "Cognitive Decline", "Caregiver Support"],
+  },
+  {
+    id: "13",
+    name: "Dr. Nandini Bhatt",
+    specialty: "Counseling Psychologist — Stress & Burnout",
+    qualification: "MA (Clinical Psychology), Certified Mindfulness Trainer",
+    experience: "9+ years",
+    languages: ["English", "Hindi", "Gujarati"],
+    availability: "Mon-Sat, 11 AM - 8 PM",
+    consultType: ["Video Call", "Phone", "Chat"],
+    phone: "+91-37890-12345",
+    email: "nandini@calmspace.in",
+    website: "https://www.calmspacetherapy.in",
+    location: "Online (Pan-India)",
+    rating: 4.8,
+    about: "Helps professionals dealing with workplace stress, burnout, and work-life balance issues. Uses mindfulness-based stress reduction (MBSR), relaxation therapy, and positive psychology techniques.",
+    tags: ["Stress", "Burnout", "Work-Life Balance", "Mindfulness", "Corporate Wellness"],
+  },
+  {
+    id: "14",
+    name: "Dr. Siddharth Joshi",
+    specialty: "Psychiatrist — Schizophrenia & Psychosis",
+    qualification: "MBBS, MD (Psychiatry), DM (Psychiatry)",
+    experience: "22+ years",
+    languages: ["English", "Hindi", "Marathi"],
+    availability: "Mon, Wed, Fri, 9 AM - 3 PM",
+    consultType: ["In-Person"],
+    phone: "+91-28901-23456",
+    email: "dr.siddharth@mindrestored.in",
+    location: "Mumbai, Maharashtra",
+    rating: 4.6,
+    about: "Senior psychiatrist with deep expertise in schizophrenia, psychotic disorders, and severe mental illness. Provides long-term management plans and family psychoeducation.",
+    tags: ["Schizophrenia", "Psychosis", "Severe Mental Illness", "Long-term Care"],
+  },
+  {
+    id: "15",
+    name: "Dr. Pooja Verma",
+    specialty: "Couple & Family Therapist",
+    qualification: "PhD (Psychology), Certified Family Therapist (AAMFT)",
+    experience: "10+ years",
+    languages: ["English", "Hindi"],
+    availability: "Tue-Sat, 12 PM - 8 PM",
+    consultType: ["In-Person", "Video Call"],
+    phone: "+91-19012-34567",
+    email: "dr.pooja@relationshipcare.in",
+    website: "https://www.relationshipcareclinic.in",
+    location: "Jaipur, Rajasthan",
+    rating: 4.7,
+    about: "Specializes in relationship counseling, marital conflicts, family dynamics, and interpersonal issues. Also helps individuals with codependency, grief, and adjustment disorders.",
+    tags: ["Relationship Counseling", "Family Therapy", "Grief", "Marital Issues", "Codependency"],
   },
 ];
 
@@ -168,12 +318,13 @@ const PREPARATION_TIPS = [
     title: "What to Discuss",
     icon: MessageCircle,
     items: [
-      "Difficulty focusing or staying on task",
-      "Trouble with time management and organization",
-      "Impulsivity or restlessness patterns",
-      "Sleep quality and energy levels",
-      "Emotional regulation challenges",
+      "Your main symptoms and how long you've had them",
+      "Sleep quality, appetite, and energy levels",
+      "Mood changes, anxiety, or emotional challenges",
+      "Difficulty focusing, memory, or concentration issues",
       "Impact on work, studies, or relationships",
+      "Any recent major life changes or stressors",
+      "Family history of mental health conditions",
     ],
   },
   {
@@ -189,7 +340,7 @@ const PREPARATION_TIPS = [
   },
 ];
 
-const SPECIALTIES = ["All", "Psychiatrist", "Psychologist", "Neuropsychiatrist", "ADHD Coach", "Child Specialist"];
+const SPECIALTIES = ["All", "Psychiatrist", "Psychologist", "Neuropsychiatrist", "ADHD Specialist", "Therapist", "Child Specialist", "Addiction", "Geriatric", "Family & Couple"];
 const CONSULT_TYPES = ["All", "In-Person", "Video Call", "Phone", "Chat"];
 
 function DoctorCard({ doctor }: { doctor: Doctor }) {
@@ -351,8 +502,12 @@ export default function DoctorConsult() {
     const matchesSpecialty =
       selectedSpecialty === "All" ||
       doc.specialty.toLowerCase().includes(selectedSpecialty.toLowerCase()) ||
-      (selectedSpecialty === "ADHD Coach" && doc.tags.includes("ADHD Coaching")) ||
-      (selectedSpecialty === "Child Specialist" && doc.specialty.includes("Child"));
+      (selectedSpecialty === "ADHD Specialist" && (doc.tags.includes("ADHD") || doc.tags.includes("ADHD Coaching") || doc.specialty.includes("ADHD"))) ||
+      (selectedSpecialty === "Therapist" && (doc.specialty.includes("Therapist") || doc.specialty.includes("Coach") || doc.specialty.includes("Counseling"))) ||
+      (selectedSpecialty === "Child Specialist" && doc.specialty.includes("Child")) ||
+      (selectedSpecialty === "Addiction" && doc.specialty.includes("Addiction")) ||
+      (selectedSpecialty === "Geriatric" && doc.specialty.includes("Geriatric")) ||
+      (selectedSpecialty === "Family & Couple" && (doc.specialty.includes("Family") || doc.specialty.includes("Couple")));
 
     const matchesConsultType =
       selectedConsultType === "All" || doc.consultType.includes(selectedConsultType);
@@ -372,7 +527,7 @@ export default function DoctorConsult() {
               Doctor Consultation
             </h1>
             <p className="text-muted-foreground mt-2">
-              Find mental health professionals who specialize in ADHD care
+              Find mental health professionals for ADHD, anxiety, depression, and more
             </p>
           </div>
         </div>
@@ -594,18 +749,20 @@ export default function DoctorConsult() {
                 <div className="p-2.5 rounded-xl bg-amber-500">
                   <Brain className="w-5 h-5 text-white" />
                 </div>
-                <h3 className="font-bold text-lg text-foreground">ADHD-Specific Questions to Ask</h3>
+                <h3 className="font-bold text-lg text-foreground">Important Questions to Ask Your Doctor</h3>
               </div>
               <div className="grid sm:grid-cols-2 gap-3">
                 {[
-                  "What type of ADHD do I have?",
-                  "Are there non-medication treatments?",
-                  "How will medication affect my daily life?",
-                  "What lifestyle changes can help?",
-                  "Should I see a specialist or therapist?",
-                  "How often should I have follow-ups?",
-                  "Can ADHD coexist with other conditions?",
+                  "What is my diagnosis and what does it mean?",
+                  "Are there non-medication treatment options?",
+                  "What are the side effects of recommended medication?",
+                  "What lifestyle changes can improve my condition?",
+                  "Should I see a specialist or therapist alongside?",
+                  "How often should I schedule follow-up visits?",
+                  "Can my condition coexist with other disorders?",
                   "Are there support groups you recommend?",
+                  "How long will treatment take to show results?",
+                  "What should I do in a crisis or emergency?",
                 ].map((question, idx) => (
                   <div key={idx} className="flex items-start gap-2 p-3 bg-amber-50 border border-amber-100 rounded-xl">
                     <MessageCircle className="w-4 h-4 text-amber-600 mt-0.5 flex-shrink-0" />
