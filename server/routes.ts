@@ -148,7 +148,8 @@ export async function registerRoutes(
     }
   });
 
-  // n8n chatbot proxy
+  // Chatbot: tries n8n webhook, then OpenAI, then built-in responses
+  let n8nFailedAt = 0;
   app.post("/api/n8n-chat", async (req, res) => {
     try {
       const { chatInput, sessionId } = req.body;
@@ -156,23 +157,63 @@ export async function registerRoutes(
         return res.status(400).json({ message: "chatInput is required" });
       }
 
-      const n8nUrl = "https://habibur090.app.n8n.cloud/webhook/e88a87ef-b2e3-4fb8-a6e0-19e48adae0da/chat";
-      const response = await fetch(n8nUrl, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ chatInput, sessionId: sessionId || "mindflex-default" })
-      });
+      // 1. Try n8n webhook (skip if it failed recently — cooldown 5 minutes)
+      const n8nUrl = process.env.N8N_WEBHOOK_URL || "https://habibur090.app.n8n.cloud/webhook/e88a87ef-b2e3-4fb8-a6e0-19e48adae0da/chat";
+      const now = Date.now();
+      if (now - n8nFailedAt > 5 * 60 * 1000) {
+        try {
+          const controller = new AbortController();
+          const timeoutId = setTimeout(() => controller.abort(), 2000);
+          const response = await fetch(n8nUrl, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ chatInput, sessionId: sessionId || "mindflex-default" }),
+            signal: controller.signal
+          });
+          clearTimeout(timeoutId);
 
-      if (!response.ok) {
-        const errorText = await response.text();
-        return res.status(response.status).json({ message: errorText || "n8n request failed" });
+          if (response.ok) {
+            const data = await response.json();
+            return res.json(data);
+          }
+          n8nFailedAt = now;
+        } catch (_n8nErr) {
+          n8nFailedAt = now;
+        }
       }
 
-      const data = await response.json();
-      res.json(data);
+      // 2. Try OpenAI if API key is available
+      if (process.env.AI_INTEGRATIONS_OPENAI_API_KEY || process.env.OPENAI_API_KEY) {
+        try {
+          const { default: OpenAI } = await import("openai");
+          const openai = new OpenAI({
+            apiKey: process.env.AI_INTEGRATIONS_OPENAI_API_KEY || process.env.OPENAI_API_KEY,
+            baseURL: process.env.AI_INTEGRATIONS_OPENAI_BASE_URL || undefined,
+          });
+          const completion = await openai.chat.completions.create({
+            model: "gpt-4o-mini",
+            messages: [
+              {
+                role: "system",
+                content: "You are a warm, empathetic psychological wellness assistant for MindFlex, a mental health support app. You help users with ADHD management, anxiety, stress, sleep issues, focus problems, and emotional well-being. Provide practical coping strategies, breathing exercises, mindfulness tips, and supportive conversations. Never diagnose or prescribe medication. Keep responses concise (2-3 paragraphs max), warm, and actionable. Use simple language."
+              },
+              { role: "user", content: chatInput }
+            ],
+            max_tokens: 500,
+          });
+          const reply = completion.choices[0]?.message?.content || "I'm here to help. Could you tell me more about how you're feeling?";
+          return res.json({ output: reply });
+        } catch (aiErr: any) {
+          console.error("OpenAI fallback error:", aiErr.message);
+        }
+      }
+
+      // 3. Built-in keyword-based responses (always works, no API needed)
+      const builtInResponse = getBuiltInResponse(chatInput);
+      return res.json({ output: builtInResponse });
     } catch (err: any) {
-      console.error("n8n proxy error:", err.message);
-      res.status(500).json({ message: "Failed to connect to AI service" });
+      console.error("Chat proxy error:", err.message);
+      return res.json({ output: getBuiltInResponse(req.body?.chatInput || "") });
     }
   });
 
@@ -180,6 +221,57 @@ export async function registerRoutes(
   await seedBadges();
 
   return httpServer;
+}
+
+function getBuiltInResponse(input: string): string {
+  const lower = input.toLowerCase();
+  
+  const responses: { keywords: string[]; reply: string }[] = [
+    {
+      keywords: ["anxious", "anxiety", "worried", "panic", "nervous"],
+      reply: "I hear you — anxiety can feel overwhelming, but there are things that can help right now.\n\n**Try this 4-7-8 breathing technique:**\n1. Breathe in through your nose for 4 seconds\n2. Hold your breath for 7 seconds\n3. Exhale slowly through your mouth for 8 seconds\n4. Repeat 3-4 times\n\nAnxiety often comes from worrying about the future. Try to bring yourself back to this moment — what can you see, hear, and feel right now? You're doing great by reaching out."
+    },
+    {
+      keywords: ["stress", "stressed", "overwhelm", "pressure", "burnout"],
+      reply: "Stress is your body's way of telling you it needs a break. Here are some practical steps:\n\n**Immediate relief:**\n- Take 5 slow, deep breaths\n- Roll your shoulders and stretch your neck\n- Step away from your screen for 2 minutes\n\n**Longer-term:**\n- Break your tasks into smaller, manageable pieces\n- Prioritize just 1-3 things today — it's okay to let the rest wait\n- Make sure you're drinking enough water\n\nRemember: You don't have to do everything at once. One step at a time."
+    },
+    {
+      keywords: ["sad", "depressed", "down", "unhappy", "low", "cry"],
+      reply: "I'm sorry you're feeling this way. Your feelings are valid, and it's okay to not be okay sometimes.\n\n**Some things that might help:**\n- Talk to someone you trust about how you're feeling\n- Go for a short walk, even just 5 minutes outside\n- Put on music that makes you feel something positive\n- Write down 3 things, however small, that you're grateful for today\n\nIf these feelings persist, please consider reaching out to a mental health professional. Check our Doctor Consultation page for specialists who can help. You matter, and you deserve support."
+    },
+    {
+      keywords: ["sleep", "insomnia", "tired", "fatigue", "exhausted", "rest"],
+      reply: "Sleep struggles are really common, especially with ADHD. Here are some evidence-based tips:\n\n**Evening routine:**\n- Dim lights 1 hour before bed\n- Put away screens 30 minutes before sleep\n- Try a warm shower or bath\n- Use our breathing exercises to wind down\n\n**Sleep environment:**\n- Keep your room cool (65-68°F / 18-20°C)\n- Use white noise or calming sounds\n- Make your bedroom for sleep only — not work\n\nIf you're exhausted right now, it's okay to take a 20-minute power nap. Set an alarm so you don't oversleep!"
+    },
+    {
+      keywords: ["focus", "concentrate", "distract", "attention", "adhd", "scattered"],
+      reply: "Staying focused can be tough, especially with ADHD. Here are some strategies that work:\n\n**The Pomodoro Technique:**\n1. Set a timer for 25 minutes\n2. Focus on ONE task only\n3. Take a 5-minute break\n4. Repeat — after 4 rounds, take a longer break\n\n**Environment tips:**\n- Remove distractions (put phone face-down)\n- Use noise-canceling headphones or lo-fi music\n- Keep only what you need on your desk\n\n**Quick focus boost:**\n- Drink a glass of cold water\n- Do 10 jumping jacks\n- Try one of our brain games to warm up your focus!\n\nYou've got this."
+    },
+    {
+      keywords: ["angry", "frustrated", "mad", "irritated", "rage"],
+      reply: "Feeling angry or frustrated is completely normal. The key is finding healthy ways to express it.\n\n**Right now, try this:**\n- Clench your fists tight for 5 seconds, then release — feel the tension leave\n- Take 3 deep breaths, exhaling longer than you inhale\n- Count backwards from 10 slowly\n\n**After you've calmed down:**\n- Write down what triggered the anger\n- Ask yourself: Will this matter in a week? A month?\n- Consider talking it through — sometimes just being heard helps\n\nIt's okay to feel angry. What matters is how we respond to it."
+    },
+    {
+      keywords: ["lonely", "alone", "isolated", "no friends"],
+      reply: "Feeling lonely can be really painful, and I want you to know that reaching out here already shows courage.\n\n**Some ideas:**\n- Join an online community related to something you enjoy\n- Volunteer — helping others often helps us feel connected\n- Reach out to someone you haven't talked to in a while, even a simple \"hey, how are you?\" text\n- Consider joining a support group (check our Doctor Consultation page)\n\nRemember: being alone and being lonely are different things. It's okay to enjoy your own company too. But if loneliness is persistent, talking to a therapist can really help."
+    },
+    {
+      keywords: ["hello", "hi", "hey", "good morning", "good evening"],
+      reply: "Hello! Welcome to MindFlex. I'm here to support your mental wellness journey.\n\nYou can talk to me about:\n- Managing stress or anxiety\n- Improving focus and attention\n- Sleep difficulties\n- Coping with difficult emotions\n- ADHD management strategies\n- Or anything else on your mind\n\nHow are you feeling today? I'm here to listen and help."
+    },
+    {
+      keywords: ["thank", "thanks", "helpful", "appreciate"],
+      reply: "You're welcome! I'm glad I could help. Remember, taking care of your mental health is one of the most important things you can do for yourself.\n\nFeel free to come back anytime you need support, want to try a breathing exercise, or just need someone to talk to. You're doing great by prioritizing your well-being!"
+    }
+  ];
+
+  for (const r of responses) {
+    if (r.keywords.some(kw => lower.includes(kw))) {
+      return r.reply;
+    }
+  }
+
+  return "Thank you for sharing that with me. Your feelings are important and valid.\n\nHere are some things that might help right now:\n- **Breathe:** Try taking 5 slow, deep breaths\n- **Move:** A short walk or gentle stretch can shift your mood\n- **Connect:** Talk to someone you trust about how you're feeling\n- **Play:** Try one of our brain games for a quick mental reset\n\nI'm here whenever you need support. Is there anything specific you'd like help with — like managing stress, improving focus, or getting better sleep?";
 }
 
 async function seedBadges() {

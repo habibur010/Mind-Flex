@@ -347,7 +347,6 @@ function N8NChatbot() {
 
       setChatMessages(prev => [...prev, { role: 'assistant', content: botReply }]);
     } catch (err) {
-      setError("Couldn't connect to the AI service. Using offline suggestions instead.");
       setChatMessages(prev => [...prev, {
         role: 'assistant',
         content: getOfflineResponse(text)
