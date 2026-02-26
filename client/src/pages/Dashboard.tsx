@@ -239,12 +239,12 @@ export default function Dashboard() {
                 </span>
               </div>
             </Link>
-            <Link href="/wellness">
-              <div className="group cursor-pointer p-6 rounded-2xl bg-gradient-to-br from-emerald-400 to-teal-500 text-white shadow-lg hover:shadow-xl hover:scale-[1.02] transition-all">
-                <h3 className="text-xl font-bold font-display">Breathe & Move</h3>
-                <p className="text-white/80 mt-1 mb-4">Reset your nervous system.</p>
+            <Link href="/health">
+              <div className="group cursor-pointer p-6 rounded-2xl bg-gradient-to-br from-rose-400 to-pink-500 text-white shadow-lg hover:shadow-xl hover:scale-[1.02] transition-all">
+                <h3 className="text-xl font-bold font-display">Health Monitor</h3>
+                <p className="text-white/80 mt-1 mb-4">Track your vitals & get insights.</p>
                 <span className="inline-flex items-center gap-2 bg-white/20 px-3 py-1 rounded-full text-sm font-medium backdrop-blur-sm">
-                  Start Session <ArrowRight className="w-4 h-4" />
+                  Log Data <ArrowRight className="w-4 h-4" />
                 </span>
               </div>
             </Link>
