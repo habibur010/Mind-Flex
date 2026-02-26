@@ -8,7 +8,7 @@ MindFlex is a responsive web application designed to support ADHD patients in ma
 - **Brain Games**: Mini-games (reaction tapper, memory match, sudoku) to redirect attention and improve focus
 - **Wellness Tools**: Yoga content, meditation guidance, and relaxation music playlists
 - **AI Chatbot**: Supportive, non-clinical chat for stress reduction and thought reframing
-- **Face Analysis**: Webcam-based assessment to detect fatigue, stress, or exhaustion using facial cues
+- **Face Analysis**: Real-time webcam expression detection using face-api.js (happy, sad, angry, fearful, surprised, neutral, tired) with confidence scores and wellness recommendations
 - **Mood Tracking**: Daily mood logging with emoji-based input
 - **Gamification**: Points, badges, and streak tracking for motivation
 - **Health Monitor**: Manual entry of wearable health data (HRV, heart rate, sleep stages, activity, stress, respiratory rate, skin temperature) with AI-powered insights and trend charts
