@@ -1,5 +1,5 @@
 import { Link, useLocation } from "wouter";
-import { Home, Gamepad2, Activity, Music, MessageCircle, User, LogOut, CheckSquare, Camera, HeartPulse } from "lucide-react";
+import { Home, Gamepad2, Activity, Music, MessageCircle, User, LogOut, CheckSquare, Camera, HeartPulse, Stethoscope } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/hooks/use-auth";
 
@@ -16,6 +16,7 @@ export function Sidebar() {
     { icon: HeartPulse, label: "Health Monitor", href: "/health" },
     { icon: Music, label: "Music", href: "/music" },
     { icon: MessageCircle, label: "Support", href: "/chat" },
+    { icon: Stethoscope, label: "Doctors", href: "/doctors" },
     { icon: User, label: "Profile", href: "/profile" },
   ];
 
@@ -69,6 +70,7 @@ export function MobileNav() {
     { icon: HeartPulse, href: "/health" },
     { icon: Music, href: "/music" },
     { icon: MessageCircle, href: "/chat" },
+    { icon: Stethoscope, href: "/doctors" },
     { icon: User, href: "/profile" },
   ];
 

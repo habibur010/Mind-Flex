@@ -17,6 +17,7 @@ import FaceAnalyzer from "@/pages/FaceAnalyzer";
 import Music from "@/pages/Music";
 import Profile from "@/pages/Profile";
 import HealthMonitor from "@/pages/HealthMonitor";
+import DoctorConsult from "@/pages/DoctorConsult";
 import NotFound from "@/pages/not-found";
 
 function Router() {
@@ -35,6 +36,7 @@ function Router() {
       <Route path="/music" component={Music} />
       <Route path="/profile" component={Profile} />
       <Route path="/health" component={HealthMonitor} />
+      <Route path="/doctors" component={DoctorConsult} />
       <Route component={NotFound} />
     </Switch>
   );
