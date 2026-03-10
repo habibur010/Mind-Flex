@@ -13,7 +13,32 @@ export default function Timer() {
   const [isWorkSession, setIsWorkSession] = useState(true);
   const [seconds, setSeconds] = useState(0);
   const [muted, setMuted] = useState(false);
-  const audioRef = useRef<HTMLAudioElement>(null);
+  const audioContextRef = useRef<AudioContext | null>(null);
+
+  // Generate a beep sound using Web Audio API
+  const playBeep = () => {
+    try {
+      const audioContext = audioContextRef.current || new (window.AudioContext || (window as any).webkitAudioContext)();
+      audioContextRef.current = audioContext;
+
+      const oscillator = audioContext.createOscillator();
+      const gainNode = audioContext.createGain();
+
+      oscillator.connect(gainNode);
+      gainNode.connect(audioContext.destination);
+
+      oscillator.frequency.value = 800; // Hz
+      oscillator.type = "sine";
+
+      gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+      gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.5);
+
+      oscillator.start(audioContext.currentTime);
+      oscillator.stop(audioContext.currentTime + 0.5);
+    } catch (error) {
+      console.log("Audio notification unavailable");
+    }
+  };
 
   const totalSeconds = (isWorkSession ? workMinutes : breakMinutes) * 60;
   const remainingSeconds = totalSeconds - seconds;
@@ -28,15 +53,16 @@ export default function Timer() {
         setSeconds((s) => s + 1);
       }, 1000);
     } else if (seconds >= totalSeconds && isRunning) {
+      // Play beep sound when timer ends
       if (!muted) {
-        audioRef.current?.play().catch(() => {});
+        playBeep();
       }
       setIsWorkSession(!isWorkSession);
       setSeconds(0);
     }
 
     return () => clearInterval(interval);
-  }, [isRunning, seconds, totalSeconds, isWorkSession, muted]);
+  }, [isRunning, seconds, totalSeconds, isWorkSession, muted, playBeep]);
 
   const handleReset = () => {
     setIsRunning(false);
@@ -201,11 +227,6 @@ export default function Timer() {
         </div>
       </div>
 
-      {/* Hidden audio element for notification */}
-      <audio
-        ref={audioRef}
-        src="data:audio/wav;base64,UklGRiYAAABXQVZFZm10IBAAAAABAAEAQB8AAAB9AAACABAAZGF0YQIAAAAAAA=="
-      />
     </DashboardLayout>
   );
 }
