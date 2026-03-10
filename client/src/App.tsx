@@ -15,6 +15,7 @@ import Chat from "@/pages/Chat";
 import Wellness from "@/pages/Wellness";
 import FaceAnalyzer from "@/pages/FaceAnalyzer";
 import Music from "@/pages/Music";
+import Timer from "@/pages/Timer";
 import Profile from "@/pages/Profile";
 import HealthMonitor from "@/pages/HealthMonitor";
 import DoctorConsult from "@/pages/DoctorConsult";
@@ -34,6 +35,7 @@ function Router() {
       <Route path="/wellness" component={Wellness} />
       <Route path="/face-analyzer" component={FaceAnalyzer} />
       <Route path="/music" component={Music} />
+      <Route path="/timer" component={Timer} />
       <Route path="/profile" component={Profile} />
       <Route path="/health" component={HealthMonitor} />
       <Route path="/doctors" component={DoctorConsult} />
