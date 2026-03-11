@@ -148,8 +148,7 @@ export async function registerRoutes(
     }
   });
 
-  // Chatbot: tries n8n webhook, then OpenAI, then built-in responses
-  let n8nFailedAt = 0;
+  // Chatbot: tries OpenAI, then built-in responses (no n8n)
   app.post("/api/n8n-chat", async (req, res) => {
     try {
       const { chatInput, sessionId } = req.body;
@@ -157,32 +156,7 @@ export async function registerRoutes(
         return res.status(400).json({ message: "chatInput is required" });
       }
 
-      // 1. Try n8n webhook (skip if it failed recently — cooldown 5 minutes)
-      const n8nUrl = process.env.N8N_WEBHOOK_URL || "https://habibur090.app.n8n.cloud/webhook/e88a87ef-b2e3-4fb8-a6e0-19e48adae0da/chat";
-      const now = Date.now();
-      if (now - n8nFailedAt > 5 * 60 * 1000) {
-        try {
-          const controller = new AbortController();
-          const timeoutId = setTimeout(() => controller.abort(), 2000);
-          const response = await fetch(n8nUrl, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ chatInput, sessionId: sessionId || "mindflex-default" }),
-            signal: controller.signal
-          });
-          clearTimeout(timeoutId);
-
-          if (response.ok) {
-            const data = await response.json();
-            return res.json(data);
-          }
-          n8nFailedAt = now;
-        } catch (_n8nErr) {
-          n8nFailedAt = now;
-        }
-      }
-
-      // 2. Try OpenAI if API key is available
+      // 1. Try OpenAI if API key is available
       if (process.env.AI_INTEGRATIONS_OPENAI_API_KEY || process.env.OPENAI_API_KEY) {
         try {
           const { default: OpenAI } = await import("openai");
@@ -204,15 +178,15 @@ export async function registerRoutes(
           const reply = completion.choices[0]?.message?.content || "I'm here to help. Could you tell me more about how you're feeling?";
           return res.json({ output: reply });
         } catch (aiErr: any) {
-          console.error("OpenAI fallback error:", aiErr.message);
+          console.error("OpenAI error:", aiErr.message);
         }
       }
 
-      // 3. Built-in keyword-based responses (always works, no API needed)
+      // 2. Built-in keyword-based responses (always works, no API needed)
       const builtInResponse = getBuiltInResponse(chatInput);
       return res.json({ output: builtInResponse });
     } catch (err: any) {
-      console.error("Chat proxy error:", err.message);
+      console.error("Chat error:", err.message);
       return res.json({ output: getBuiltInResponse(req.body?.chatInput || "") });
     }
   });
