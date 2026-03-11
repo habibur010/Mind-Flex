@@ -16,7 +16,7 @@ export default function Landing() {
       </header>
 
       {/* Hero */}
-      <section className="py-6 md:py-10 px-6 md:px-12">
+      <section className="py-8 md:py-12 px-6 md:px-12">
         <div className="max-w-7xl mx-auto grid lg:grid-cols-2 gap-8 items-center">
           <div className="space-y-5">
             <h1 className="text-4xl md:text-5xl font-bold font-display text-foreground leading-[1.1]">
@@ -61,7 +61,7 @@ export default function Landing() {
       </section>
 
       {/* Understanding ADHD Section */}
-      <section className="py-16 md:py-24 px-6 md:px-12 bg-white/50 backdrop-blur-sm">
+      <section className="pt-10 pb-16 md:pt-16 md:pb-24 px-6 md:px-12 bg-white/50 backdrop-blur-sm">
         <div className="max-w-7xl mx-auto space-y-12">
           <div className="text-center space-y-4">
             <h2 className="text-4xl md:text-5xl font-bold font-display">What is ADHD?</h2>
