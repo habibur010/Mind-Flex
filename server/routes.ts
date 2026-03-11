@@ -157,11 +157,18 @@ export async function registerRoutes(
       }
 
       // 1. Try OpenAI if API key is available
-      if (process.env.AI_INTEGRATIONS_OPENAI_API_KEY || process.env.OPENAI_API_KEY) {
+      const apiKey = process.env.AI_INTEGRATIONS_OPENAI_API_KEY || process.env.OPENAI_API_KEY;
+      if (apiKey) {
         try {
           const { default: OpenAI } = await import("openai");
+          // Check if API key has issues (spaces, newlines, etc)
+          const trimmedKey = apiKey.trim();
+          if (!trimmedKey.startsWith('sk-')) {
+            console.error("OpenAI warning: API key format looks invalid");
+          }
+          
           const openai = new OpenAI({
-            apiKey: process.env.AI_INTEGRATIONS_OPENAI_API_KEY || process.env.OPENAI_API_KEY,
+            apiKey: trimmedKey,
             baseURL: process.env.AI_INTEGRATIONS_OPENAI_BASE_URL || undefined,
           });
           const completion = await openai.chat.completions.create({
@@ -176,10 +183,15 @@ export async function registerRoutes(
             max_tokens: 500,
           });
           const reply = completion.choices[0]?.message?.content || "I'm here to help. Could you tell me more about how you're feeling?";
+          console.log("✓ OpenAI response successful");
           return res.json({ output: reply });
         } catch (aiErr: any) {
-          console.error("OpenAI error:", aiErr.message);
+          console.error("❌ OpenAI error:", aiErr.message);
+          console.error("Error status:", aiErr.status);
+          console.error("Error type:", aiErr.type);
         }
+      } else {
+        console.log("No OpenAI API key found - using built-in responses");
       }
 
       // 2. Built-in keyword-based responses (always works, no API needed)
