@@ -16,23 +16,23 @@ export default function Landing() {
       </header>
 
       {/* Hero */}
-      <section className="py-12 md:py-20 px-6 md:px-12">
-        <div className="max-w-7xl mx-auto grid lg:grid-cols-2 gap-12 items-center">
-          <div className="space-y-8">
-            <h1 className="text-5xl md:text-7xl font-bold font-display text-foreground leading-[1.1]">
+      <section className="py-6 md:py-10 px-6 md:px-12">
+        <div className="max-w-7xl mx-auto grid lg:grid-cols-2 gap-8 items-center">
+          <div className="space-y-5">
+            <h1 className="text-4xl md:text-5xl font-bold font-display text-foreground leading-[1.1]">
               Master your mind,<br/>
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-purple-600">
                 find your focus.
               </span>
             </h1>
-            <p className="text-xl text-muted-foreground max-w-lg leading-relaxed">
+            <p className="text-base text-muted-foreground max-w-lg leading-relaxed">
               MindFlex is designed specifically for ADHD brains. Manage tasks, track your mood, build focus with gamification, and get support when you need it—all in one compassionate space.
             </p>
-            <div className="flex gap-4 flex-wrap">
-              <Link href="/register" className="px-8 py-4 rounded-full bg-blue-600 text-white font-bold text-lg shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all flex items-center gap-2" data-testid="button-get-started">
-                Get Started <ArrowRight className="w-5 h-5" />
+            <div className="flex gap-3 flex-wrap">
+              <Link href="/register" className="px-6 py-3 rounded-full bg-blue-600 text-white font-bold text-base shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all flex items-center gap-2" data-testid="button-get-started">
+                Get Started <ArrowRight className="w-4 h-4" />
               </Link>
-              <Link href="/login" className="px-8 py-4 rounded-full border-2 border-blue-600 text-blue-600 font-bold text-lg hover:bg-blue-50 transition-all">
+              <Link href="/login" className="px-6 py-3 rounded-full border-2 border-blue-600 text-blue-600 font-bold text-base hover:bg-blue-50 transition-all">
                 Learn More
               </Link>
             </div>
@@ -42,19 +42,19 @@ export default function Landing() {
             <img 
               src="https://images.unsplash.com/photo-1563089145-599997674d42?auto=format&fit=crop&q=80&w=1000"
               alt="MindFlex Abstract Art"
-              className="rounded-[3rem] shadow-2xl rotate-3 hover:rotate-0 transition-all duration-700"
+              className="rounded-[2rem] shadow-2xl rotate-3 hover:rotate-0 transition-all duration-700 max-h-64 w-full object-cover"
             />
             
-            <div className="absolute -left-12 top-20 bg-white p-6 rounded-2xl shadow-xl animate-bounce" style={{ animationDuration: '3s' }}>
-              <Zap className="w-8 h-8 text-yellow-500 mb-2" />
-              <p className="font-bold text-sm">Focus Streak</p>
-              <p className="text-2xl font-display text-blue-600">5 Days!</p>
+            <div className="absolute -left-8 top-10 bg-white p-4 rounded-2xl shadow-xl animate-bounce" style={{ animationDuration: '3s' }}>
+              <Zap className="w-6 h-6 text-yellow-500 mb-1" />
+              <p className="font-bold text-xs">Focus Streak</p>
+              <p className="text-lg font-display text-blue-600">5 Days!</p>
             </div>
 
-            <div className="absolute -right-8 bottom-20 bg-white p-6 rounded-2xl shadow-xl animate-bounce" style={{ animationDelay: '1.5s', animationDuration: '3s' }}>
-              <Heart className="w-8 h-8 text-red-500 mb-2" />
-              <p className="font-bold text-sm">Mood</p>
-              <p className="text-2xl font-display text-green-600">Great!</p>
+            <div className="absolute -right-6 bottom-10 bg-white p-4 rounded-2xl shadow-xl animate-bounce" style={{ animationDelay: '1.5s', animationDuration: '3s' }}>
+              <Heart className="w-6 h-6 text-red-500 mb-1" />
+              <p className="font-bold text-xs">Mood</p>
+              <p className="text-lg font-display text-green-600">Great!</p>
             </div>
           </div>
         </div>
