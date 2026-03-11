@@ -340,17 +340,23 @@ function N8NChatbot() {
         })
       });
 
-      if (!response.ok) throw new Error('Failed to get response');
+      if (!response.ok) {
+        throw new Error(`Server error: ${response.status}`);
+      }
 
       const data = await response.json();
       const botReply = data.output || data.response || data.message || data.text || (typeof data === 'string' ? data : "I received your message but couldn't process it properly. Please try again.");
 
       setChatMessages(prev => [...prev, { role: 'assistant', content: botReply }]);
-    } catch (err) {
+    } catch (err: any) {
+      console.error("Chat error:", err);
+      // Use offline fallback response
+      const offlineResponse = getOfflineResponse(text);
       setChatMessages(prev => [...prev, {
         role: 'assistant',
-        content: getOfflineResponse(text)
+        content: offlineResponse
       }]);
+      setError(err.message || 'Connection issue - using offline responses');
     } finally {
       setIsTyping(false);
     }
