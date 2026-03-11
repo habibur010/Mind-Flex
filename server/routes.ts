@@ -148,36 +148,67 @@ export async function registerRoutes(
     }
   });
 
-  // Chatbot: tries OpenAI, then built-in responses (no n8n)
+  // Chatbot: tries Gemini, then OpenAI, then built-in responses
+  const SYSTEM_PROMPT = "You are a warm, empathetic psychological wellness assistant for MindFlex, a mental health support app. You help users with ADHD management, anxiety, stress, sleep issues, focus problems, and emotional well-being. Provide practical coping strategies, breathing exercises, mindfulness tips, and supportive conversations. Never diagnose or prescribe medication. Keep responses concise (2-3 paragraphs max), warm, and actionable. Use simple language.";
+
   app.post("/api/n8n-chat", async (req, res) => {
     try {
-      const { chatInput, sessionId } = req.body;
+      const { chatInput } = req.body;
       if (!chatInput) {
         return res.status(400).json({ message: "chatInput is required" });
       }
 
-      // 1. Try OpenAI if API key is available
-      const apiKey = process.env.AI_INTEGRATIONS_OPENAI_API_KEY || process.env.OPENAI_API_KEY;
-      if (apiKey) {
+      // 1. Try Gemini if API key is available (using v1 REST API directly)
+      const geminiKey = process.env.GEMINI_API_KEY?.trim();
+      if (geminiKey) {
+        const geminiModels = ["gemini-1.5-flash", "gemini-1.5-pro", "gemini-2.0-flash"];
+        for (const modelName of geminiModels) {
+          try {
+            const geminiRes = await fetch(
+              `https://generativelanguage.googleapis.com/v1/models/${modelName}:generateContent?key=${geminiKey}`,
+              {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                  contents: [{
+                    parts: [{
+                      text: `${SYSTEM_PROMPT}\n\nUser message: ${chatInput}`
+                    }]
+                  }],
+                  generationConfig: { maxOutputTokens: 512 },
+                }),
+              }
+            );
+            if (!geminiRes.ok) {
+              const errText = await geminiRes.text();
+              console.error(`❌ Gemini error (${modelName}) [${geminiRes.status}]:`, errText.substring(0, 300));
+              continue;
+            }
+            const geminiData: any = await geminiRes.json();
+            const reply = geminiData?.candidates?.[0]?.content?.parts?.[0]?.text;
+            if (reply) {
+              console.log(`✓ Gemini response successful (model: ${modelName})`);
+              return res.json({ output: reply });
+            }
+          } catch (geminiErr: any) {
+            console.error(`❌ Gemini fetch error (${modelName}):`, geminiErr.message?.substring(0, 200));
+          }
+        }
+      }
+
+      // 2. Try OpenAI if API key is available
+      const openaiKey = (process.env.AI_INTEGRATIONS_OPENAI_API_KEY || process.env.OPENAI_API_KEY)?.trim();
+      if (openaiKey) {
         try {
           const { default: OpenAI } = await import("openai");
-          // Check if API key has issues (spaces, newlines, etc)
-          const trimmedKey = apiKey.trim();
-          if (!trimmedKey.startsWith('sk-')) {
-            console.error("OpenAI warning: API key format looks invalid");
-          }
-          
           const openai = new OpenAI({
-            apiKey: trimmedKey,
+            apiKey: openaiKey,
             baseURL: process.env.AI_INTEGRATIONS_OPENAI_BASE_URL || undefined,
           });
           const completion = await openai.chat.completions.create({
             model: "gpt-4o-mini",
             messages: [
-              {
-                role: "system",
-                content: "You are a warm, empathetic psychological wellness assistant for MindFlex, a mental health support app. You help users with ADHD management, anxiety, stress, sleep issues, focus problems, and emotional well-being. Provide practical coping strategies, breathing exercises, mindfulness tips, and supportive conversations. Never diagnose or prescribe medication. Keep responses concise (2-3 paragraphs max), warm, and actionable. Use simple language."
-              },
+              { role: "system", content: SYSTEM_PROMPT },
               { role: "user", content: chatInput }
             ],
             max_tokens: 500,
@@ -187,14 +218,11 @@ export async function registerRoutes(
           return res.json({ output: reply });
         } catch (aiErr: any) {
           console.error("❌ OpenAI error:", aiErr.message);
-          console.error("Error status:", aiErr.status);
-          console.error("Error type:", aiErr.type);
         }
-      } else {
-        console.log("No OpenAI API key found - using built-in responses");
       }
 
-      // 2. Built-in keyword-based responses (always works, no API needed)
+      // 3. Built-in keyword-based responses (always works, no API needed)
+      console.log("Using built-in responses");
       const builtInResponse = getBuiltInResponse(chatInput);
       return res.json({ output: builtInResponse });
     } catch (err: any) {
