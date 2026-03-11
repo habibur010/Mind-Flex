@@ -161,27 +161,24 @@ export async function registerRoutes(
       // 1. Try Gemini if API key is available (using v1 REST API directly)
       const geminiKey = process.env.GEMINI_API_KEY?.trim();
       if (geminiKey) {
-        const geminiModels = ["gemini-1.5-flash", "gemini-1.5-pro", "gemini-2.0-flash"];
+        const geminiModels = ["gemini-2.5-flash", "gemini-2.0-flash", "gemini-2.0-flash-lite"];
         for (const modelName of geminiModels) {
           try {
             const geminiRes = await fetch(
-              `https://generativelanguage.googleapis.com/v1/models/${modelName}:generateContent?key=${geminiKey}`,
+              `https://generativelanguage.googleapis.com/v1beta/models/${modelName}:generateContent?key=${geminiKey}`,
               {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
-                  contents: [{
-                    parts: [{
-                      text: `${SYSTEM_PROMPT}\n\nUser message: ${chatInput}`
-                    }]
-                  }],
+                  system_instruction: { parts: [{ text: SYSTEM_PROMPT }] },
+                  contents: [{ parts: [{ text: chatInput }] }],
                   generationConfig: { maxOutputTokens: 512 },
                 }),
               }
             );
             if (!geminiRes.ok) {
               const errText = await geminiRes.text();
-              console.error(`❌ Gemini error (${modelName}) [${geminiRes.status}]:`, errText.substring(0, 300));
+              console.error(`❌ Gemini error (${modelName}) [${geminiRes.status}]:`, errText.substring(0, 200));
               continue;
             }
             const geminiData: any = await geminiRes.json();

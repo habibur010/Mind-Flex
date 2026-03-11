@@ -46,4 +46,4 @@ integrations = ["javascript_log_in_with_replit:2.0.0", "javascript_openai_ai_int
 
 [userenv.shared]
 OPENAI_API_KEY = "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"
-GEMINI_API_KEY = "AIzaSyCAJJICda_JB5i37nIg6uWt0v7ChyTDWSg"
+GEMINI_API_KEY = "AIzaSyCK7_MmKMx6z2dTwsA26OhZLeD6cEUogkE"
