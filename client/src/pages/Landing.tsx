@@ -42,7 +42,7 @@ export default function Landing() {
             <img 
               src="https://images.unsplash.com/photo-1563089145-599997674d42?auto=format&fit=crop&q=80&w=1000"
               alt="MindFlex Abstract Art"
-              className="rounded-[2rem] shadow-2xl rotate-3 hover:rotate-0 transition-all duration-700 max-h-64 w-full object-cover"
+              className="rounded-[2rem] shadow-2xl rotate-3 hover:rotate-0 transition-all duration-700 max-h-96 w-full object-cover"
             />
             
             <div className="absolute -left-8 top-10 bg-white p-4 rounded-2xl shadow-xl animate-bounce" style={{ animationDuration: '3s' }}>
