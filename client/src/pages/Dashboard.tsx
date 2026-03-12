@@ -1,7 +1,7 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { DashboardLayout } from "@/components/DashboardLayout";
 import { MoodTracker } from "@/components/MoodTracker";
-import { Zap, Target, Trophy, ArrowRight, Quote, Check, Trash2, Clock } from "lucide-react";
+import { Zap, Target, Trophy, ArrowRight, Quote, Check, Clock } from "lucide-react";
 import { Link } from "wouter";
 import { format, differenceInDays } from "date-fns";
 import { cn } from "@/lib/utils";
@@ -18,10 +18,28 @@ const DAILY_MESSAGES = [
   "Confidence boost - I have the skills, strength, and creativity to handle whatever comes."
 ];
 
-const INITIAL_TASKS = [
-  { id: 1, title: "Take a 5-minute stretch break", category: "morning", completed: false, points: 10 },
-  { id: 2, title: "Write down 3 things you're grateful for", category: "morning", completed: false, points: 15 },
-  { id: 3, title: "Drink a glass of water", category: "afternoon", completed: false, points: 5 },
+const ROTATING_TASKS = [
+  { title: "Make the bed", category: "morning", points: 10 },
+  { title: "Drink a glass of water", category: "morning", points: 5 },
+  { title: "Write 1 priority for the day", category: "morning", points: 10 },
+  { title: "Stretch for 5 minutes", category: "morning", points: 10 },
+  { title: "Brain dump in a notebook", category: "morning", points: 15 },
+  { title: "Listen to one upbeat song", category: "morning", points: 5 },
+  { title: "Open windows/curtains", category: "morning", points: 5 },
+  { title: "Tidy one small area", category: "morning", points: 10 },
+  { title: "Check planner/calendar briefly", category: "morning", points: 10 },
+  { title: "Take a short walk", category: "afternoon", points: 15 },
+  { title: "Eat a simple breakfast", category: "morning", points: 10 },
+  { title: "Write 3 micro-goals", category: "afternoon", points: 15 },
+  { title: "2 minutes deep breathing", category: "morning", points: 10 },
+  { title: "Read one page of a book", category: "afternoon", points: 12 },
+  { title: "Do a quick puzzle/game", category: "afternoon", points: 12 },
+  { title: "Sketch/doodle for 3 minutes", category: "afternoon", points: 10 },
+  { title: "Say one positive affirmation aloud", category: "morning", points: 10 },
+  { title: "Set a 30-min phone timer", category: "morning", points: 10 },
+  { title: "Note one thing you did well yesterday", category: "evening", points: 15 },
+  { title: "Do a small self-care act", category: "evening", points: 15 },
+  { title: "Plan one enjoyable activity for today", category: "morning", points: 10 },
 ];
 
 interface LocalTask {
@@ -32,14 +50,23 @@ interface LocalTask {
   points: number;
 }
 
+const STORAGE_KEY_PREFIX = "mindflex_dashboard_tasks_";
+
+function loadDailyCompletions(dateKey: string): number[] {
+  const saved = localStorage.getItem(STORAGE_KEY_PREFIX + dateKey);
+  return saved ? JSON.parse(saved) : [];
+}
+
+function saveDailyCompletions(dateKey: string, completedIds: number[]) {
+  localStorage.setItem(STORAGE_KEY_PREFIX + dateKey, JSON.stringify(completedIds));
+}
+
 function LocalTaskCard({ 
   task, 
-  onToggle, 
-  onDelete 
+  onToggle,
 }: { 
   task: LocalTask; 
   onToggle: () => void; 
-  onDelete: () => void;
 }) {
   return (
     <div className={cn(
@@ -88,14 +115,6 @@ function LocalTaskCard({
             </span>
           </div>
         </div>
-
-        <button
-          onClick={onDelete}
-          data-testid={`delete-task-${task.id}`}
-          className="opacity-0 group-hover:opacity-100 p-2 text-muted-foreground hover:text-destructive transition-all"
-        >
-          <Trash2 className="w-4 h-4" />
-        </button>
       </div>
     </div>
   );
@@ -103,32 +122,48 @@ function LocalTaskCard({
 
 export default function Dashboard() {
   const userName = "Friend";
-  const [tasks, setTasks] = useState<LocalTask[]>(INITIAL_TASKS);
   const { points, streak, addPoints, removePoints, incrementTasksCompleted, decrementTasksCompleted } = usePoints();
 
   const startDate = new Date(2024, 0, 1);
-  const dayIndex = differenceInDays(new Date(), startDate) % 7;
+  const today = new Date();
+  const dayIndex = differenceInDays(today, startDate) % 7;
+  const dateKey = format(today, "yyyy-MM-dd");
   const dailyMessage = DAILY_MESSAGES[dayIndex];
 
-  const handleToggleTask = (taskId: number) => {
-    setTasks(prev => prev.map(task => {
-      if (task.id === taskId) {
-        const newCompleted = !task.completed;
-        if (newCompleted) {
-          addPoints(task.points);
-          incrementTasksCompleted();
-        } else {
-          removePoints(task.points);
-          decrementTasksCompleted();
-        }
-        return { ...task, completed: newCompleted };
-      }
-      return task;
+  const todayRotatingTasks = useMemo(() => {
+    const offset = differenceInDays(today, startDate) % Math.floor(ROTATING_TASKS.length / 3);
+    return ROTATING_TASKS.slice(offset * 3, offset * 3 + 3).map((t, i) => ({
+      id: offset * 3 + i + 1,
+      ...t,
+      completed: false,
     }));
-  };
+  }, [dateKey]);
 
-  const handleDeleteTask = (taskId: number) => {
-    setTasks(prev => prev.filter(task => task.id !== taskId));
+  const [tasks, setTasks] = useState<LocalTask[]>(() => {
+    const completedIds = loadDailyCompletions(dateKey);
+    return todayRotatingTasks.map(t => ({ ...t, completed: completedIds.includes(t.id) }));
+  });
+
+  const handleToggleTask = (taskId: number) => {
+    setTasks(prev => {
+      const updated = prev.map(task => {
+        if (task.id === taskId) {
+          const newCompleted = !task.completed;
+          if (newCompleted) {
+            addPoints(task.points);
+            incrementTasksCompleted();
+          } else {
+            removePoints(task.points);
+            decrementTasksCompleted();
+          }
+          return { ...task, completed: newCompleted };
+        }
+        return task;
+      });
+      const completedIds = updated.filter(t => t.completed).map(t => t.id);
+      saveDailyCompletions(dateKey, completedIds);
+      return updated;
+    });
   };
 
   const incompleteTasks = tasks.filter(t => !t.completed);
@@ -199,13 +234,12 @@ export default function Dashboard() {
                     key={task.id} 
                     task={task} 
                     onToggle={() => handleToggleTask(task.id)}
-                    onDelete={() => handleDeleteTask(task.id)}
                   />
                 ))
               ) : (
                 <div className="p-8 border border-dashed border-border rounded-2xl text-center">
-                  <p className="text-muted-foreground">All tasks completed! Great job!</p>
-                  <Link href="/tasks" className="mt-4 inline-block px-4 py-2 bg-primary/10 text-primary rounded-lg font-medium">Add More Tasks</Link>
+                  <p className="text-muted-foreground font-semibold">🎉 All tasks completed! Great job!</p>
+                  <Link href="/tasks" className="mt-4 inline-block px-4 py-2 bg-primary/10 text-primary rounded-lg font-medium">View All Tasks</Link>
                 </div>
               )}
             </div>
@@ -220,7 +254,6 @@ export default function Dashboard() {
                       key={task.id} 
                       task={task} 
                       onToggle={() => handleToggleTask(task.id)}
-                      onDelete={() => handleDeleteTask(task.id)}
                     />
                   ))}
                 </div>
