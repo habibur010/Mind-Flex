@@ -161,34 +161,51 @@ export async function registerRoutes(
       // 1. Try Gemini if API key is available (using v1 REST API directly)
       const geminiKey = process.env.GEMINI_API_KEY?.trim();
       if (geminiKey) {
-        const geminiModels = ["gemini-2.5-flash", "gemini-2.0-flash", "gemini-2.0-flash-lite"];
-        for (const modelName of geminiModels) {
-          try {
-            const geminiRes = await fetch(
-              `https://generativelanguage.googleapis.com/v1beta/models/${modelName}:generateContent?key=${geminiKey}`,
-              {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                  system_instruction: { parts: [{ text: SYSTEM_PROMPT }] },
-                  contents: [{ parts: [{ text: chatInput }] }],
-                  generationConfig: { maxOutputTokens: 2048 },
-                }),
+        const geminiModels = [
+          "gemini-2.5-flash",
+          "gemini-2.5-pro",
+          "gemini-2.0-flash",
+          "gemini-2.0-flash-lite",
+        ];
+        const geminiPayload = {
+          system_instruction: { parts: [{ text: SYSTEM_PROMPT }] },
+          contents: [{ parts: [{ text: chatInput }] }],
+          generationConfig: { maxOutputTokens: 2048 },
+        };
+
+        const tryGemini = async (modelName: string, retries = 2): Promise<string | null> => {
+          for (let attempt = 0; attempt <= retries; attempt++) {
+            try {
+              const geminiRes = await fetch(
+                `https://generativelanguage.googleapis.com/v1beta/models/${modelName}:generateContent?key=${geminiKey}`,
+                { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(geminiPayload) }
+              );
+              if (geminiRes.status === 503) {
+                if (attempt < retries) {
+                  await new Promise(r => setTimeout(r, 1500 * (attempt + 1)));
+                  continue;
+                }
               }
-            );
-            if (!geminiRes.ok) {
-              const errText = await geminiRes.text();
-              console.error(`❌ Gemini error (${modelName}) [${geminiRes.status}]:`, errText.substring(0, 200));
-              continue;
+              if (!geminiRes.ok) {
+                const errText = await geminiRes.text();
+                console.error(`❌ Gemini (${modelName}) [${geminiRes.status}]:`, errText.substring(0, 150));
+                return null;
+              }
+              const data: any = await geminiRes.json();
+              return data?.candidates?.[0]?.content?.parts?.[0]?.text ?? null;
+            } catch (e: any) {
+              console.error(`❌ Gemini fetch error (${modelName}):`, e.message?.substring(0, 100));
+              return null;
             }
-            const geminiData: any = await geminiRes.json();
-            const reply = geminiData?.candidates?.[0]?.content?.parts?.[0]?.text;
-            if (reply) {
-              console.log(`✓ Gemini response successful (model: ${modelName})`);
-              return res.json({ output: reply });
-            }
-          } catch (geminiErr: any) {
-            console.error(`❌ Gemini fetch error (${modelName}):`, geminiErr.message?.substring(0, 200));
+          }
+          return null;
+        };
+
+        for (const modelName of geminiModels) {
+          const reply = await tryGemini(modelName);
+          if (reply) {
+            console.log(`✓ Gemini response successful (model: ${modelName})`);
+            return res.json({ output: reply });
           }
         }
       }
