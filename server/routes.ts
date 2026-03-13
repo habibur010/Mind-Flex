@@ -162,8 +162,8 @@ export async function registerRoutes(
       const geminiKey = process.env.GEMINI_API_KEY?.trim();
       if (geminiKey) {
         const geminiModels = [
-          "gemini-2.5-flash",
           "gemini-2.5-pro",
+          "gemini-2.5-flash",
           "gemini-2.0-flash",
           "gemini-2.0-flash-lite",
         ];
