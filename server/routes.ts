@@ -172,7 +172,7 @@ export async function registerRoutes(
                 body: JSON.stringify({
                   system_instruction: { parts: [{ text: SYSTEM_PROMPT }] },
                   contents: [{ parts: [{ text: chatInput }] }],
-                  generationConfig: { maxOutputTokens: 512 },
+                  generationConfig: { maxOutputTokens: 2048 },
                 }),
               }
             );
