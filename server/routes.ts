@@ -30,12 +30,14 @@ export async function registerRoutes(
 
   app.post(api.tasks.create.path, isAuthenticated, async (req: any, res) => {
     try {
+      console.log("Create task body:", req.body);
       const input = api.tasks.create.input.parse(req.body);
       const task = await storage.createTask(req.user.claims.sub, input);
       res.status(201).json(task);
     } catch (err) {
       if (err instanceof z.ZodError) {
-        return res.status(400).json({ message: err.errors[0].message });
+        console.error("Task validation ZodError details:", JSON.stringify(err.errors, null, 2));
+        return res.status(400).json({ message: `${err.errors[0].path.join(".")}: ${err.errors[0].message}` });
       }
       res.status(500).json({ message: "Internal server error" });
     }

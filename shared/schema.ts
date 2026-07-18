@@ -87,11 +87,11 @@ export const userProfile = pgTable("user_profile", {
 });
 
 // === SCHEMAS ===
-export const insertTaskSchema = createInsertSchema(tasks).omit({ id: true, createdAt: true });
-export const insertMoodLogSchema = createInsertSchema(moodLogs).omit({ id: true, createdAt: true });
-export const insertAssessmentSchema = createInsertSchema(assessments).omit({ id: true, createdAt: true });
-export const insertHealthDataSchema = createInsertSchema(healthData).omit({ id: true, createdAt: true });
-export const insertUserProfileSchema = createInsertSchema(userProfile).omit({ id: true });
+export const insertTaskSchema = createInsertSchema(tasks).omit({ id: true, userId: true, createdAt: true });
+export const insertMoodLogSchema = createInsertSchema(moodLogs).omit({ id: true, userId: true, createdAt: true });
+export const insertAssessmentSchema = createInsertSchema(assessments).omit({ id: true, userId: true, createdAt: true });
+export const insertHealthDataSchema = createInsertSchema(healthData).omit({ id: true, userId: true, createdAt: true });
+export const insertUserProfileSchema = createInsertSchema(userProfile).omit({ id: true, userId: true });
 
 // === EXPLICIT API CONTRACT TYPES ===
 export type Task = typeof tasks.$inferSelect;

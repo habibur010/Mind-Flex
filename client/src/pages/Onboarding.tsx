@@ -116,13 +116,37 @@ export default function Onboarding() {
     } else {
       setIsSaving(true);
       localStorage.setItem("mindflex_onboarding", JSON.stringify(answers));
-      setTimeout(() => {
+      
+      fetch("/api/onboarding/complete", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ responses: answers }),
+        credentials: "include",
+      })
+      .then(async (res) => {
+        if (!res.ok) {
+          throw new Error("Failed to save onboarding online");
+        }
+        return res.json();
+      })
+      .then(() => {
+        toast({
+          title: "Welcome to MindFlex!",
+          description: "Your personalized experience is ready and synced.",
+        });
+        setLocation("/dashboard");
+      })
+      .catch((err) => {
+        console.error("Onboarding sync failed:", err);
         toast({
           title: "Welcome to MindFlex!",
           description: "Your personalized experience is ready.",
         });
         setLocation("/dashboard");
-      }, 500);
+      })
+      .finally(() => {
+        setIsSaving(false);
+      });
     }
   };
 

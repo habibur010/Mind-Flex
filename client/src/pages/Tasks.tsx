@@ -11,6 +11,8 @@ import { cn } from "@/lib/utils";
 import { usePoints } from "@/hooks/use-points";
 import { useToast } from "@/hooks/use-toast";
 
+import { useTasks, useCreateTask, useUpdateTask, useDeleteTask } from "@/hooks/use-tasks";
+
 const ROTATING_TASKS = [
   { title: "Make the bed", category: "morning", info: "quick win, sets order" },
   { title: "Drink a glass of water", category: "morning", info: "hydration boosts alertness" },
@@ -35,27 +37,11 @@ const ROTATING_TASKS = [
   { title: "Plan one enjoyable activity for today", category: "morning", info: "motivation anchor" }
 ];
 
-interface LocalTask {
-  id: number;
-  title: string;
-  category: string;
-  completed: boolean;
-  points: number;
-}
-
-const STORAGE_KEY = "mindflex_my_tasks";
-
-function loadTasks(): LocalTask[] {
-  const saved = localStorage.getItem(STORAGE_KEY);
-  return saved ? JSON.parse(saved) : [];
-}
-
-function saveTasks(tasks: LocalTask[]) {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(tasks));
-}
-
 export default function Tasks() {
-  const [tasks, setTasks] = useState<LocalTask[]>(loadTasks);
+  const { data: tasks = [], isLoading: loadingTasks } = useTasks();
+  const createTaskMutation = useCreateTask();
+  const updateTaskMutation = useUpdateTask();
+  const deleteTaskMutation = useDeleteTask();
   const [isOpen, setIsOpen] = useState(false);
   const { addPoints, removePoints, incrementTasksCompleted, decrementTasksCompleted } = usePoints();
   const { toast } = useToast();
@@ -72,57 +58,87 @@ export default function Tasks() {
     return ROTATING_TASKS.slice(dayOffset * 3, (dayOffset * 3) + 3);
   }, [dayOffset]);
 
-  const handleCreate = (e: React.FormEvent) => {
+  const handleCreate = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!newTask.title.trim()) return;
 
-    const task: LocalTask = {
-      id: Date.now(),
-      title: newTask.title.trim(),
-      category: newTask.category,
-      completed: false,
-      points: 10,
-    };
-
-    const updated = [...tasks, task];
-    setTasks(updated);
-    saveTasks(updated);
-    setIsOpen(false);
-    setNewTask({ title: "", category: "morning" });
-    toast({
-      title: "Task created",
-      description: `"${task.title}" added to your ${task.category} list.`,
-    });
+    try {
+      await createTaskMutation.mutateAsync({
+        title: newTask.title.trim(),
+        category: newTask.category,
+        completed: false,
+        description: "",
+      });
+      setIsOpen(false);
+      setNewTask({ title: "", category: "morning" });
+    } catch (err: any) {
+      toast({
+        title: "Failed to create task",
+        description: err.message || "Something went wrong",
+        variant: "destructive",
+      });
+    }
   };
 
-  const handleToggle = (taskId: number) => {
-    const updated = tasks.map(task => {
-      if (task.id === taskId) {
-        const newCompleted = !task.completed;
-        if (newCompleted) {
-          addPoints(task.points);
-          incrementTasksCompleted();
-        } else {
-          removePoints(task.points);
-          decrementTasksCompleted();
-        }
-        return { ...task, completed: newCompleted };
-      }
-      return task;
-    });
-    setTasks(updated);
-    saveTasks(updated);
-  };
-
-  const handleDelete = (taskId: number) => {
+  const handleToggle = async (taskId: number) => {
     const task = tasks.find(t => t.id === taskId);
-    if (task?.completed) {
-      removePoints(task.points);
+    if (!task) return;
+    const newCompleted = !task.completed;
+    
+    // Optimistic points update
+    if (newCompleted) {
+      addPoints(10);
+      incrementTasksCompleted();
+    } else {
+      removePoints(10);
       decrementTasksCompleted();
     }
-    const updated = tasks.filter(t => t.id !== taskId);
-    setTasks(updated);
-    saveTasks(updated);
+
+    try {
+      await updateTaskMutation.mutateAsync({
+        id: taskId,
+        completed: newCompleted,
+      });
+    } catch (err: any) {
+      // Revert on error
+      if (newCompleted) {
+        removePoints(10);
+        decrementTasksCompleted();
+      } else {
+        addPoints(10);
+        incrementTasksCompleted();
+      }
+      toast({
+        title: "Failed to update task",
+        description: err.message || "Something went wrong",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const handleDelete = async (taskId: number) => {
+    const task = tasks.find(t => t.id === taskId);
+    if (!task) return;
+
+    if (task.completed) {
+      removePoints(10);
+      decrementTasksCompleted();
+    }
+
+    try {
+      await deleteTaskMutation.mutateAsync(taskId);
+    } catch (err: any) {
+      // Revert on error
+      if (task.completed) {
+        addPoints(10);
+        incrementTasksCompleted();
+      }
+      toast({
+        title: "Failed to delete task",
+        description: err.message || "Something went wrong",
+        variant: "destructive",
+      });
+    }
   };
 
   const categories = ["morning", "afternoon", "evening"];
@@ -267,7 +283,7 @@ export default function Tasks() {
                             {task.title}
                           </p>
                           <div className="flex items-center gap-2 mt-1">
-                            <span className="text-[10px] font-bold text-primary bg-primary/10 px-2 py-0.5 rounded-full">+{task.points} pts</span>
+                            <span className="text-[10px] font-bold text-primary bg-primary/10 px-2 py-0.5 rounded-full">+10 pts</span>
                           </div>
                         </div>
                         <button

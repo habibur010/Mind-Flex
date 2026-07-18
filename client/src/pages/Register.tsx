@@ -5,9 +5,13 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Brain, Mail, Lock, User, ArrowRight, Heart, ShieldCheck } from "lucide-react";
+import { useAuth } from "@/hooks/use-auth";
+import { useToast } from "@/hooks/use-toast";
 
 export default function Register() {
   const [, setLocation] = useLocation();
+  const { register, isRegistering } = useAuth();
+  const { toast } = useToast();
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
@@ -17,9 +21,27 @@ export default function Register() {
 
   const isFormValid = formData.firstName && formData.email && formData.password;
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setLocation("/onboarding");
+    if (!isFormValid) return;
+    try {
+      await register({
+        email: formData.email,
+        firstName: formData.firstName,
+        lastName: formData.lastName,
+      });
+      toast({
+        title: "Account created successfully",
+        description: "Welcome to MindFlex!",
+      });
+      setLocation("/onboarding");
+    } catch (err: any) {
+      toast({
+        title: "Registration failed",
+        description: err.message || "Something went wrong",
+        variant: "destructive",
+      });
+    }
   };
 
   return (
@@ -113,10 +135,10 @@ export default function Register() {
               <Button 
                 type="submit" 
                 className="w-full h-12 rounded-xl text-base font-bold"
-                disabled={!isFormValid}
+                disabled={!isFormValid || isRegistering}
                 data-testid="button-register"
               >
-                Continue <ArrowRight className="w-4 h-4 ml-2" />
+                {isRegistering ? "Registering..." : <>Continue <ArrowRight className="w-4 h-4 ml-2" /></>}
               </Button>
             </form>
 

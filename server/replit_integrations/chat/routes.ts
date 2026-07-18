@@ -62,18 +62,48 @@ export function registerChatRoutes(app: Express): void {
     }
   });
 
-  // Send message and get AI response (streaming)
   app.post("/api/conversations/:id/messages", async (req: Request, res: Response) => {
     try {
       const conversationId = parseInt(req.params.id);
       const { content } = req.body;
-
       // Save user message
       await chatStorage.createMessage(conversationId, "user", content);
 
-      if (!openai) {
-        await chatStorage.createMessage(conversationId, "assistant", "AI chat is not available in this environment. Please use the n8n chatbot in the Support section instead.");
-        return res.json({ content: "AI chat is not available in this environment. Please use the n8n chatbot in the Support section instead." });
+      const geminiKey = process.env.GEMINI_API_KEY?.trim();
+
+      if (!openai && !geminiKey) {
+        const fallbackMsg = "AI chat is currently operating in offline mode. Please type wellness questions to receive guidance.";
+        await chatStorage.createMessage(conversationId, "assistant", fallbackMsg);
+        return res.json({ content: fallbackMsg });
+      }
+
+      if (geminiKey && !openai) {
+        try {
+          const SYSTEM_PROMPT = "You are a warm, empathetic psychological wellness assistant for MindFlex, a mental health support app. You help users with ADHD management, anxiety, stress, sleep issues, focus problems, and emotional well-being.";
+          const geminiPayload = {
+            system_instruction: { parts: [{ text: SYSTEM_PROMPT }] },
+            contents: [{ parts: [{ text: content }] }],
+          };
+          const geminiRes = await fetch(
+            `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${geminiKey}`,
+            {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify(geminiPayload),
+            }
+          );
+          if (geminiRes.ok) {
+            const data: any = await geminiRes.json();
+            const text = data?.candidates?.[0]?.content?.parts?.[0]?.text ?? "I'm here to listen. How are you feeling?";
+            await chatStorage.createMessage(conversationId, "assistant", text);
+            return res.json({ content: text });
+          }
+        } catch (err: any) {
+          console.error("Gemini chat fallback error:", err.message);
+        }
+        const errFallback = "I'm having trouble connecting to my brain right now. Please try again in a bit.";
+        await chatStorage.createMessage(conversationId, "assistant", errFallback);
+        return res.json({ content: errFallback });
       }
 
       // Get conversation history for context

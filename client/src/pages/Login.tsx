@@ -5,9 +5,13 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Brain, Mail, Lock, ArrowRight, Sparkles, ShieldCheck } from "lucide-react";
+import { useAuth } from "@/hooks/use-auth";
+import { useToast } from "@/hooks/use-toast";
 
 export default function Login() {
   const [, setLocation] = useLocation();
+  const { login, isLoggingIn } = useAuth();
+  const { toast } = useToast();
   const [formData, setFormData] = useState({
     email: "",
     password: "",
@@ -15,9 +19,23 @@ export default function Login() {
 
   const isFormValid = formData.email && formData.password;
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setLocation("/onboarding");
+    if (!isFormValid) return;
+    try {
+      await login(formData.email);
+      toast({
+        title: "Logged in successfully",
+        description: "Welcome back!",
+      });
+      setLocation("/dashboard");
+    } catch (err: any) {
+      toast({
+        title: "Login failed",
+        description: err.message || "Something went wrong",
+        variant: "destructive",
+      });
+    }
   };
 
   return (
@@ -83,10 +101,10 @@ export default function Login() {
               <Button 
                 type="submit" 
                 className="w-full h-12 rounded-xl text-base font-bold"
-                disabled={!isFormValid}
+                disabled={!isFormValid || isLoggingIn}
                 data-testid="button-login"
               >
-                Log In <ArrowRight className="w-4 h-4 ml-2" />
+                {isLoggingIn ? "Logging in..." : <>Log In <ArrowRight className="w-4 h-4 ml-2" /></>}
               </Button>
             </form>
 

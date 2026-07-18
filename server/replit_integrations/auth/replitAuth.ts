@@ -7,6 +7,9 @@ import type { Express, RequestHandler } from "express";
 import memoize from "memoizee";
 import connectPg from "connect-pg-simple";
 import { authStorage } from "./storage";
+import { db } from "../../db";
+import { users } from "@shared/schema";
+import { eq } from "drizzle-orm";
 
 const getOidcConfig = memoize(
   async () => {
@@ -67,13 +70,83 @@ export async function setupAuth(app: Express) {
   app.use(passport.session());
 
   if (!process.env.REPL_ID) {
-    console.log("Replit Auth not available (running locally). Auth routes disabled.");
-    passport.serializeUser((user: Express.User, cb) => cb(null, user));
-    passport.deserializeUser((user: Express.User, cb) => cb(null, user));
+    console.log("Replit Auth not available (running locally). Registering local Auth routes.");
+    passport.serializeUser((user: any, cb) => cb(null, user));
+    passport.deserializeUser((user: any, cb) => cb(null, user));
 
-    app.get("/api/login", (_req, res) => res.redirect("/"));
+    app.post("/api/auth/register", async (req, res, next) => {
+      try {
+        const { email, firstName, lastName } = req.body;
+        if (!email) {
+          return res.status(400).json({ message: "Email is required" });
+        }
+        const existingUsers = await db.select().from(users).where(eq(users.email, email.toLowerCase()));
+        if (existingUsers.length > 0) {
+          return res.status(400).json({ message: "Email already registered" });
+        }
+        const user = await authStorage.upsertUser({
+          email: email.toLowerCase(),
+          firstName: firstName || email.split("@")[0],
+          lastName: lastName || "",
+          profileImageUrl: `https://avatar.iran.liara.run/public/boy?username=${email}`,
+        });
+        const sessionUser = {
+          id: user.id,
+          claims: {
+            sub: user.id,
+            email: user.email,
+            first_name: user.firstName,
+            last_name: user.lastName,
+          },
+          expires_at: Math.floor(Date.now() / 1000) + 30 * 24 * 60 * 60, // 30 days
+        };
+        req.login(sessionUser, (err) => {
+          if (err) return next(err);
+          res.status(201).json(user);
+        });
+      } catch (err: any) {
+        next(err);
+      }
+    });
+
+    app.post("/api/auth/login", async (req, res, next) => {
+      try {
+        const { email } = req.body;
+        if (!email) {
+          return res.status(400).json({ message: "Email is required" });
+        }
+        const existingUsers = await db.select().from(users).where(eq(users.email, email.toLowerCase()));
+        if (existingUsers.length === 0) {
+          return res.status(400).json({ message: "User not found. Please register." });
+        }
+        const user = existingUsers[0];
+        const sessionUser = {
+          id: user.id,
+          claims: {
+            sub: user.id,
+            email: user.email,
+            first_name: user.firstName,
+            last_name: user.lastName,
+          },
+          expires_at: Math.floor(Date.now() / 1000) + 30 * 24 * 60 * 60, // 30 days
+        };
+        req.login(sessionUser, (err) => {
+          if (err) return next(err);
+          res.json(user);
+        });
+      } catch (err: any) {
+        next(err);
+      }
+    });
+
+    app.get("/api/login", (_req, res) => res.redirect("/login"));
     app.get("/api/callback", (_req, res) => res.redirect("/"));
-    app.get("/api/logout", (_req, res) => res.redirect("/"));
+    app.get("/api/logout", (req, res, next) => {
+      req.logout((err) => {
+        if (err) return next(err);
+        res.redirect("/");
+      });
+    });
     return;
   }
 
