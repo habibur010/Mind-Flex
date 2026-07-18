@@ -2,25 +2,27 @@ import fs from "node:fs";
 import OpenAI, { toFile } from "openai";
 import { Buffer } from "node:buffer";
 
-export const openai = process.env.AI_INTEGRATIONS_OPENAI_API_KEY
+// Use the standard OPENAI_API_KEY env var (not Replit-proxied)
+export const openai = process.env.OPENAI_API_KEY
   ? new OpenAI({
-      apiKey: process.env.AI_INTEGRATIONS_OPENAI_API_KEY,
-      baseURL: process.env.AI_INTEGRATIONS_OPENAI_BASE_URL,
+      apiKey: process.env.OPENAI_API_KEY,
     })
   : null;
 
 /**
  * Generate an image and return as Buffer.
- * Uses gpt-image-1 model via Replit AI Integrations.
+ * Uses dall-e-3 via standard OpenAI API.
  */
 export async function generateImageBuffer(
   prompt: string,
   size: "1024x1024" | "512x512" | "256x256" = "1024x1024"
 ): Promise<Buffer> {
+  if (!openai) throw new Error("OPENAI_API_KEY is not configured");
   const response = await openai.images.generate({
-    model: "gpt-image-1",
+    model: "dall-e-3",
     prompt,
-    size,
+    size: size === "512x512" || size === "256x256" ? "1024x1024" : size,
+    response_format: "b64_json",
   });
   const base64 = response.data[0]?.b64_json ?? "";
   return Buffer.from(base64, "base64");
@@ -28,13 +30,14 @@ export async function generateImageBuffer(
 
 /**
  * Edit/combine multiple images into a composite.
- * Uses gpt-image-1 model via Replit AI Integrations.
+ * Uses dall-e-2 (only model that supports image editing via standard OpenAI API).
  */
 export async function editImages(
   imageFiles: string[],
   prompt: string,
   outputPath?: string
 ): Promise<Buffer> {
+  if (!openai) throw new Error("OPENAI_API_KEY is not configured");
   const images = await Promise.all(
     imageFiles.map((file) =>
       toFile(fs.createReadStream(file), file, {
@@ -44,9 +47,10 @@ export async function editImages(
   );
 
   const response = await openai.images.edit({
-    model: "gpt-image-1",
-    image: images,
+    model: "dall-e-2",
+    image: images[0],
     prompt,
+    response_format: "b64_json",
   });
 
   const imageBase64 = response.data[0]?.b64_json ?? "";
@@ -58,4 +62,3 @@ export async function editImages(
 
   return imageBytes;
 }
-

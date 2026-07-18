@@ -1,0 +1,22 @@
+# render.yaml — One-click Render deployment configuration
+# Docs: https://render.com/docs/blueprint-spec
+
+services:
+  - type: web
+    name: mind-flex
+    runtime: node
+    plan: free
+    buildCommand: npm install && npm run build
+    startCommand: npm start
+    healthCheckPath: /api/auth/user
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: DATABASE_URL
+        sync: false   # Set manually in Render dashboard (use Render's internal DB URL)
+      - key: SESSION_SECRET
+        generateValue: true   # Render will auto-generate a secure random value
+      - key: GEMINI_API_KEY
+        sync: false   # Set manually in Render dashboard
+      - key: OPENAI_API_KEY
+        sync: false   # Optional — only needed for voice/image/streaming chat features
